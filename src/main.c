@@ -45,6 +45,8 @@ int main(int argc, char *argv[])
         createBlock(rend, 41 * 12, 360 - 36, "./image/block.png"),
         createBlock(rend, 41 * 12, 360 - 48, "./image/block.png"),
     };
+
+    // get quantity of blocks for the render loop
     int block_len = sizeof(blocks) / sizeof(Block*);
     
     // controls animation loop
@@ -80,7 +82,7 @@ int main(int argc, char *argv[])
             applyCollisionToPlayerHor(player, blocks[b]);
         }
 
-        // then draws the player over
+        // then draws the player over the blocks
         SDL_RenderCopy(rend, player->tex, NULL, &player->dest);
  
         // triggers the double buffers
