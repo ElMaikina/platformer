@@ -4,10 +4,10 @@
 #include <stdbool.h>
 
 #include "../include/player.h"
-#include "../include/bullet.h"
-#include "../include/enemy.h"
+#include "../include/block.h"
+#include "../include/physics.h"
 #include "../include/config.h"
- 
+
 int main(int argc, char *argv[])
 {
     // returns zero on success else non-zero
@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
         printf("error initializing SDL: %s\n", SDL_GetError());
     }
     // creates a window
-    SDL_Window* win = SDL_CreateWindow("Shoot Em' Up",
+    SDL_Window* win = SDL_CreateWindow("Platform Game",
                                        SDL_WINDOWPOS_CENTERED,
                                        SDL_WINDOWPOS_CENTERED,
                                        WINDOW_WIDTH, 
@@ -30,23 +30,20 @@ int main(int argc, char *argv[])
  
     // creates a renderer to render our images
     SDL_Renderer* rend = SDL_CreateRenderer(win, -1, render_flags);
- 
+
     // create the main player
-    Player *player = createPlayer(rend, WINDOW_WIDTH, WINDOW_HEIGHT);
+    Player *player = createPlayer(rend, "./image/round.png");
 
     // stores all the bullets to be drawn in a linked list
-    Bullet *bullets[BULLET_MAX_QTY];
-    int bullet_qty = 0;
-
-    // create the enemy
-    Enemy *enemy = createEnemy(rend, 2 * WINDOW_WIDTH / 3, WINDOW_HEIGHT / 2);
-
-    // create all the bullets and draw them outside the screen
-    // when the player shoot, they teleport to the player position
-    for (int b = 0; b < BULLET_MAX_QTY; b++) {
-        Bullet *bullet = createBullet(rend, -WINDOW_HEIGHT, -WINDOW_WIDTH);
-        bullets[b] = bullet;
-    }
+    Block *blocks[] = {
+        createBlock(rend, 22 * 12, 27 * 12, "./image/block.png"),
+        createBlock(rend, 23 * 12, 27 * 12, "./image/block.png"),
+        createBlock(rend, 24 * 12, 27 * 12, "./image/block.png"),
+        createBlock(rend, 29 * 12, 25 * 12, "./image/block.png"),
+        createBlock(rend, 30 * 12, 25 * 12, "./image/block.png"),
+        createBlock(rend, 31 * 12, 25 * 12, "./image/block.png"),
+    };
+    int block_len = sizeof(blocks) / sizeof(Block*);
     
     // controls animation loop
     int close = 0;
@@ -56,49 +53,40 @@ int main(int argc, char *argv[])
 
         SDL_Event event;
 
-        while (SDL_PollEvent(&event)) 
-        {
+        while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 close = 1;
                 return 0;
             }
         }
-        // manages player movement
-        movePlayer(player);
-
-        // apply limits to player movement
-        limitPlayer(player, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        // moves the bullets to the players location
-        // to make the illusion that they are spawning
-        if (shootBullet(player)) {
-            int bullet_index = bullet_qty % BULLET_MAX_QTY;
-            bullets[bullet_index]->dest.x = player->dest.x;// + (bullets[bullet_index]->dest.w / 2);
-            bullets[bullet_index]->dest.y = player->dest.y;// + (bullets[bullet_index]->dest.h / 2);
-            bullet_qty++;
-        }
-
         // clears the screen
         SDL_RenderClear(rend);
         
-        // draws all the bullets first
-        for (int b = 0; b < BULLET_MAX_QTY; b++) {
-            bullets[b]->dest.x += BULLET_SPEED;
-            SDL_RenderCopy(rend, bullets[b]->tex, NULL, &bullets[b]->dest);
+        // manages player movement
+        moveAndControlPlayer(player);
+
+        // apply gravity and physics to player
+        applyGravityToPlayer(player);
+
+        // apply limits to player movement
+        applyBoundsToPlayer(player);
+
+        // draws all the blocks
+        for (int b = 0; b < block_len; b++) {
+            SDL_RenderCopy(rend, blocks[b]->tex, NULL, &blocks[b]->dest);
+            //player->dest.x = playerCollideHor(player->dest, blocks[b]->dest);
+            player->dest.y = playerCollideVer(player->dest, blocks[b]->dest);
         }
 
         // then draws the player over
         SDL_RenderCopy(rend, player->tex, NULL, &player->dest);
  
-        // then draws the player over
-        SDL_RenderCopy(rend, enemy->tex, NULL, &enemy->dest);
- 
         // triggers the double buffers
         // for multiple rendering
         SDL_RenderPresent(rend);
  
-        // limits WINDOW_RATE
-        SDL_Delay(1000 / WINDOW_RATE);
+        // limits the refresh rate
+        SDL_Delay(1000 / WINDOW_FRAMERATE);
     }
  
     // destroy texture

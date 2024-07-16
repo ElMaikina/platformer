@@ -1,19 +1,27 @@
 typedef struct {
+    // sprite properties
     SDL_Surface* surface;
     SDL_Texture* tex;
     SDL_Rect dest;
-    int shoot;
+    
+    // gameplay parameters
+    int vel_x;
+    int vel_y;
+    
+    // gameplay states
+    bool has_control;
+    bool has_jumped;
+    bool on_ground;
 } Player;
 
 // creates the player
-Player *createPlayer(SDL_Renderer* rend, int winw, int winh);
+Player *createPlayer(SDL_Renderer* rend, char sprite[]);
 
 // manages player movement
-void movePlayer(Player *player);
+void moveAndControlPlayer(Player *player);
 
 // limits player movement
-void limitPlayer(Player *player, int winw, int winh);
+void applyBoundsToPlayer(Player *player);
 
-// makes player shoot bullets
-// returns 1 if it shoots, 0 otherwise
-bool shootBullet(Player *player);
+// apply world gravity to player
+void applyGravityToPlayer(Player *player);

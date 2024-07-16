@@ -3,17 +3,17 @@
 #include <SDL2/SDL_timer.h>
 #include <stdbool.h>
 
-#include "../include/bullet.h"
+#include "../include/block.h"
 #include "../include/config.h"
 
-Bullet *createBullet(SDL_Renderer* rend, int x, int y) {
-    // creates the bullet pointer and allocates memory
-    Bullet *bullet;
-    bullet = (Bullet*)malloc(sizeof(Bullet));
+Block *createBlock(SDL_Renderer* rend, int x, int y, char sprite[]) {
+    // creates the block pointer and allocates memory
+    Block *block;
+    block = (Block*)malloc(sizeof(Block));
 
     // creates the surface to be drawn
     SDL_Surface* surface;
-    surface = IMG_Load("./image/bullet.png");
+    surface = IMG_Load(sprite);
 
     // creates a texture to use hardware rendering
     SDL_Texture* tex = SDL_CreateTextureFromSurface(rend, surface);
@@ -26,14 +26,12 @@ Bullet *createBullet(SDL_Renderer* rend, int x, int y) {
     SDL_QueryTexture(tex, NULL, NULL, &dest.w, &dest.h);
     
     // centers the geometry to the center of the screen
-    //dest.w /= 12;
-    //dest.h /= 12;
-    dest.x = x + dest.w/2;
-    dest.y = y + dest.h/2;
+    dest.x = x;
+    dest.y = y;
 
-    // assigns bullet variables
-    bullet->surface = surface;
-    bullet->tex = tex;
-    bullet->dest = dest;
-    return bullet;
+    // assigns block variables
+    block->surface = surface;
+    block->tex = tex;
+    block->dest = dest;
+    return block;
 }

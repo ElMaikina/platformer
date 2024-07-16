@@ -1,8 +1,9 @@
 typedef struct {
+    // sprite properties
     SDL_Surface* surface;
     SDL_Texture* tex;
     SDL_Rect dest;
-} Bullet;
+} Block;
 
 // creates the player
-Bullet *createBullet(SDL_Renderer* rend, int x, int y);
+Block *createBlock(SDL_Renderer* rend, int x, int y, char sprite[]);
