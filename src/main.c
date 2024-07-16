@@ -4,9 +4,6 @@
 #include <stdbool.h>
 
 #include "../include/player.h"
-#include "../include/block.h"
-#include "../include/physics.h"
-#include "../include/config.h"
 
 int main(int argc, char *argv[])
 {
@@ -42,6 +39,11 @@ int main(int argc, char *argv[])
         createBlock(rend, 29 * 12, 25 * 12, "./image/block.png"),
         createBlock(rend, 30 * 12, 25 * 12, "./image/block.png"),
         createBlock(rend, 31 * 12, 25 * 12, "./image/block.png"),
+        
+        createBlock(rend, 41 * 12, 360 - 12, "./image/block.png"),
+        createBlock(rend, 41 * 12, 360 - 24, "./image/block.png"),
+        createBlock(rend, 41 * 12, 360 - 36, "./image/block.png"),
+        createBlock(rend, 41 * 12, 360 - 48, "./image/block.png"),
     };
     int block_len = sizeof(blocks) / sizeof(Block*);
     
@@ -74,8 +76,8 @@ int main(int argc, char *argv[])
         // draws all the blocks
         for (int b = 0; b < block_len; b++) {
             SDL_RenderCopy(rend, blocks[b]->tex, NULL, &blocks[b]->dest);
-            //player->dest.x = playerCollideHor(player->dest, blocks[b]->dest);
-            player->dest.y = playerCollideVer(player->dest, blocks[b]->dest);
+            applyCollisionToPlayerVer(player, blocks[b]);
+            applyCollisionToPlayerHor(player, blocks[b]);
         }
 
         // then draws the player over

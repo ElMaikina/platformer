@@ -1,10 +1,4 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_timer.h>
-#include <stdbool.h>
-
 #include "../include/player.h"
-#include "../include/config.h"
 
 Player *createPlayer(SDL_Renderer* rend, char sprite[]) {
     // creates the player pointer and allocates memory
@@ -114,5 +108,46 @@ void applyGravityToPlayer(Player *player) {
     }
     if (player->vel_y >= PLAYER_GRAVITY) {
         player->vel_y = PLAYER_GRAVITY;
+    }
+}
+
+void applyCollisionToPlayerVer(Player *player, Block *block) {
+    if (player->dest.x + player->vel_x < block->dest.x + block->dest.w &&
+        player->dest.x + player->vel_x + player->dest.w > block->dest.x &&
+        player->dest.y + player->vel_y < block->dest.y + block->dest.h &&
+        player->dest.y + player->vel_y + player->dest.h > block->dest.y) 
+        {
+        if (player->dest.y + player->vel_y + player->dest.h > block->dest.y && player->vel_y > 0) {
+            player->dest.y = block->dest.y - player->dest.h;
+            player->on_ground = true;
+            player->vel_y = 0;
+            return;
+        }
+
+        if (player->dest.y + player->vel_y < block->dest.y + block->dest.h && player->vel_y < 0) {
+            player->dest.y = block->dest.y + player->dest.h;
+            player->vel_y = 0;
+            return;
+        }
+    }
+}
+
+void applyCollisionToPlayerHor(Player *player, Block *block) {
+    if (player->dest.x + player->vel_x < block->dest.x + block->dest.w &&
+        player->dest.x + player->vel_x + player->dest.w > block->dest.x &&
+        player->dest.y + player->vel_y < block->dest.y + block->dest.h &&
+        player->dest.y + player->vel_y + player->dest.h > block->dest.y)
+        {
+        if (player->dest.x + player->vel_x + player->dest.w > block->dest.x && player->vel_x > 0) {
+            player->dest.x = block->dest.x - player->dest.w;
+            player->vel_x = 0;
+            return;
+        }
+        
+        if (player->dest.x + player->vel_x < block->dest.x + block->dest.w && player->vel_x < 0) {
+            player->dest.x = block->dest.x + block->dest.w;
+            player->vel_x = 0;
+            return;
+        }
     }
 }

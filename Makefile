@@ -6,10 +6,10 @@ CC := gcc
 # set the compiler flags
 CFLAGS := `sdl2-config --libs --cflags` -ggdb3 -O0 --std=c99 -Wall -lSDL2_image -lm
 # add header files here
-HDRS := include/config.h include/player.h include/block.h include/physics.h
+HDRS := include/config.h include/player.h include/block.h
 
 # add source files here
-SRCS := src/main.c src/player.c src/block.c src/physics.c
+SRCS := src/main.c src/player.c src/block.c
 
 # generate names of object files
 OBJS := $(SRCS:.c=.o)
