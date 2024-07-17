@@ -56,10 +56,24 @@ int main(int argc, char *argv[])
     
     // controls animation loop
     int close = 0;
+
+    // count game ticks twice to update according to refresh rate
+    Uint32 ticks_a = 0;
+    Uint32 ticks_b = 0;
+
+    // get the difference of ticks between a frame and another
+    Uint32 delta = 0;
  
     // animation loop
     while (!close) {
 
+        // fetch game ticks
+        ticks_a = SDL_GetTicks();
+        
+        // get delta ticks to limit framerate
+        delta = ticks_a - ticks_b;
+
+        // poll os events
         SDL_Event event;
 
         while (SDL_PollEvent(&event)) {
@@ -68,34 +82,42 @@ int main(int argc, char *argv[])
                 return 0;
             }
         }
-        // clears the screen
-        SDL_RenderClear(rend);
         
-        // manages player movement
-        moveAndControlPlayer(player);
+        // limit framerate by adding a delay
+        if (delta > 1000 / WINDOW_FRAMERATE) 
+        {
+            // print fps in terminal
+            printf("FPS: %d\n", (1000 / delta));
 
-        // apply gravity and physics to player
-        applyGravityToPlayer(player);
+            // update the tick count
+            ticks_b = ticks_a;
 
-        // draws all the blocks
-        for (int b = 0; b < block_len; b++) {
-            SDL_RenderCopy(rend, blocks[b]->tex, NULL, &blocks[b]->dest);
-            applyCollisionToPlayerVer(player, blocks[b]);
-            applyCollisionToPlayerHor(player, blocks[b]);
+            // clears the screen
+            SDL_RenderClear(rend);
+            
+            // manages player movement
+            moveAndControlPlayer(player);
+
+            // apply gravity and physics to player
+            applyGravityToPlayer(player);
+
+            // draws all the blocks
+            for (int b = 0; b < block_len; b++) {
+                SDL_RenderCopy(rend, blocks[b]->tex, NULL, &blocks[b]->dest);
+                applyCollisionToPlayerVer(player, blocks[b]);
+                applyCollisionToPlayerHor(player, blocks[b]);
+            }
+
+            // apply limits to player movement
+            applyBoundsToPlayer(player);
+
+            // then draws the player over the blocks
+            SDL_RenderCopy(rend, player->tex, NULL, &player->dest);
+    
+            // triggers the double buffers
+            // for multiple rendering
+            SDL_RenderPresent(rend);
         }
-
-        // apply limits to player movement
-        applyBoundsToPlayer(player);
-
-        // then draws the player over the blocks
-        SDL_RenderCopy(rend, player->tex, NULL, &player->dest);
- 
-        // triggers the double buffers
-        // for multiple rendering
-        SDL_RenderPresent(rend);
- 
-        // limits the refresh rate
-        SDL_Delay(1000 / WINDOW_FRAMERATE);
     }
  
     // destroy texture
