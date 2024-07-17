@@ -33,9 +33,18 @@ int main(int argc, char *argv[])
 
     // stores all the bullets to be drawn in a linked list
     Block *blocks[] = {
+        createBlock(rend, 8 * 12, 23 * 12, "./image/block.png"),
+        createBlock(rend, 9 * 12, 23 * 12, "./image/block.png"),
+        createBlock(rend, 10 * 12, 23 * 12, "./image/block.png"),
+
+        createBlock(rend, 18 * 12, 23 * 12, "./image/block.png"),
+        createBlock(rend, 19 * 12, 23 * 12, "./image/block.png"),
+        createBlock(rend, 20 * 12, 23 * 12, "./image/block.png"),
+
         createBlock(rend, 22 * 12, 27 * 12, "./image/block.png"),
         createBlock(rend, 23 * 12, 27 * 12, "./image/block.png"),
         createBlock(rend, 24 * 12, 27 * 12, "./image/block.png"),
+
         createBlock(rend, 29 * 12, 25 * 12, "./image/block.png"),
         createBlock(rend, 30 * 12, 25 * 12, "./image/block.png"),
         createBlock(rend, 31 * 12, 25 * 12, "./image/block.png"),
@@ -72,15 +81,15 @@ int main(int argc, char *argv[])
         // apply gravity and physics to player
         applyGravityToPlayer(player);
 
-        // apply limits to player movement
-        applyBoundsToPlayer(player);
-
         // draws all the blocks
         for (int b = 0; b < block_len; b++) {
             SDL_RenderCopy(rend, blocks[b]->tex, NULL, &blocks[b]->dest);
             applyCollisionToPlayerVer(player, blocks[b]);
             applyCollisionToPlayerHor(player, blocks[b]);
         }
+
+        // apply limits to player movement
+        applyBoundsToPlayer(player);
 
         // then draws the player over the blocks
         SDL_RenderCopy(rend, player->tex, NULL, &player->dest);

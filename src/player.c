@@ -28,11 +28,17 @@ Player *createPlayer(SDL_Renderer* rend, char sprite[]) {
     player->tex = tex;
     player->dest = dest;
 
-    // assigns player variables
+    // gameplay parameters
     player->vel_x = 0;
     player->vel_y = 0;
-    player->has_jumped = false;
-    player->on_ground = false;
+    
+    // gameplay states
+    player->wall_right = false;
+    player->wall_left = false;
+    player->wall_top = false;
+    player->jumped = false;
+    player->ground = false;
+    player->control = true;
 
     return player;
 }
@@ -43,44 +49,48 @@ void moveAndControlPlayer(Player *player) {
     
     // if player is in controllable state
     // then react to keyboard events
-    if (player->has_control) {
+    if (player->control) {
         // uses the arrow keys for movement
-        if (!keystate[SDL_SCANCODE_Z]) {
-            if (keystate[SDL_SCANCODE_LEFT])
+        if (keystate[SDL_SCANCODE_LEFT] && !player->wall_left) {
+            if (!keystate[SDL_SCANCODE_Z])
                 player->vel_x = -PLAYER_WALK_SPEED;
-
-            if (keystate[SDL_SCANCODE_RIGHT])
-                player->vel_x = PLAYER_WALK_SPEED;
-        }
-        if (keystate[SDL_SCANCODE_Z]) {
-            if (keystate[SDL_SCANCODE_LEFT])
+            if (keystate[SDL_SCANCODE_Z])
                 player->vel_x = -PLAYER_RUN_SPEED;
-
-            if (keystate[SDL_SCANCODE_RIGHT])
+        }
+        
+        if (keystate[SDL_SCANCODE_RIGHT] && !player->wall_right) {
+            if (!keystate[SDL_SCANCODE_Z])
+                player->vel_x = PLAYER_WALK_SPEED;
+            if (keystate[SDL_SCANCODE_Z])
                 player->vel_x = PLAYER_RUN_SPEED;
         }
         // if the player is not pressing 
         // right or left, stop moving
-        if (!keystate[SDL_SCANCODE_LEFT] && 
-            !keystate[SDL_SCANCODE_RIGHT])
+        if (!keystate[SDL_SCANCODE_LEFT] && !keystate[SDL_SCANCODE_RIGHT])
             player->vel_x = 0;
 
         // jump when on the ground
-        if (player->on_ground && !player->has_jumped) {
+        if (player->ground && !player->jumped) {
             if (keystate[SDL_SCANCODE_X]) {
                 player->vel_y = -PLAYER_JUMP_SPEED;
-                player->has_jumped = true;
-                player->on_ground = false;
+                player->jumped = true;
             }
         }
         // release the key first to keep jumping
         if (!keystate[SDL_SCANCODE_X]) {
-            player->has_jumped = false;
+            player->jumped = false;
         }
     }
     // apply player speed to sprite
     player->dest.x += player->vel_x;
     player->dest.y += player->vel_y;
+
+    // reset collision state to be 
+    // overwritten by collision function
+    player->wall_right = false;
+    player->wall_left = false;
+    player->wall_top = false;
+    player->ground = false;
 }
 
 void applyBoundsToPlayer(Player *player) {
@@ -96,7 +106,7 @@ void applyBoundsToPlayer(Player *player) {
         
     if (player->dest.y + player->dest.h + player->vel_y > WINDOW_HEIGHT) {
         player->dest.y = WINDOW_HEIGHT - player->dest.h;
-        player->on_ground = true;
+        player->ground = true;
         player->vel_y = 0;
     }
 }
@@ -112,42 +122,47 @@ void applyGravityToPlayer(Player *player) {
 }
 
 void applyCollisionToPlayerVer(Player *player, Block *block) {
-    if (player->dest.x + player->vel_x < block->dest.x + block->dest.w &&
-        player->dest.x + player->vel_x + player->dest.w > block->dest.x &&
+    // check intersection between player and block
+    if (player->dest.x < block->dest.x + block->dest.w &&
+        player->dest.x + player->dest.w > block->dest.x &&
         player->dest.y + player->vel_y < block->dest.y + block->dest.h &&
         player->dest.y + player->vel_y + player->dest.h > block->dest.y) 
         {
-        if (player->dest.y + player->vel_y + player->dest.h > block->dest.y && player->vel_y > 0) {
+        if (player->dest.y < block->dest.y && player->vel_y > 0) {
             player->dest.y = block->dest.y - player->dest.h;
-            player->on_ground = true;
+            player->ground = true;
             player->vel_y = 0;
             return;
         }
-
-        if (player->dest.y + player->vel_y < block->dest.y + block->dest.h && player->vel_y < 0) {
+        if (player->dest.y > block->dest.y && player->vel_y < 0) {
             player->dest.y = block->dest.y + player->dest.h;
+            player->wall_top = true;
             player->vel_y = 0;
             return;
         }
+        return;
     }
 }
 
 void applyCollisionToPlayerHor(Player *player, Block *block) {
+    // check intersection between player and block
     if (player->dest.x + player->vel_x < block->dest.x + block->dest.w &&
         player->dest.x + player->vel_x + player->dest.w > block->dest.x &&
-        player->dest.y + player->vel_y < block->dest.y + block->dest.h &&
-        player->dest.y + player->vel_y + player->dest.h > block->dest.y)
+        player->dest.y < block->dest.y + block->dest.h &&
+        player->dest.y + player->dest.h > block->dest.y)
         {
-        if (player->dest.x + player->vel_x + player->dest.w > block->dest.x && player->vel_x > 0) {
+        if (player->dest.x < block->dest.x && player->vel_x > 0) {
             player->dest.x = block->dest.x - player->dest.w;
+            player->wall_right = true;
             player->vel_x = 0;
             return;
         }
-        
-        if (player->dest.x + player->vel_x < block->dest.x + block->dest.w && player->vel_x < 0) {
+        if (player->dest.x > block->dest.x && player->vel_x < 0) {
             player->dest.x = block->dest.x + block->dest.w;
+            player->wall_left = true;
             player->vel_x = 0;
             return;
         }
+        return;
     }
 }

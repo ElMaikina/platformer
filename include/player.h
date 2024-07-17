@@ -17,9 +17,12 @@ typedef struct {
     int vel_y;
     
     // gameplay states
-    bool has_control;
-    bool has_jumped;
-    bool on_ground;
+    bool wall_right;
+    bool wall_left;
+    bool wall_top;
+    bool jumped;
+    bool ground;
+    bool control;
 } Player;
 
 // creates the player
