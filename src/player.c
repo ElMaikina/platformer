@@ -51,23 +51,25 @@ void moveAndControlPlayer(Player *player) {
     // then react to keyboard events
     if (player->control) {
         // uses the arrow keys for movement
-        if (keystate[SDL_SCANCODE_LEFT] && !player->wall_left) {
-            if (!keystate[SDL_SCANCODE_Z])
-                player->vel_x = -PLAYER_WALK_SPEED;
-            if (keystate[SDL_SCANCODE_Z])
-                player->vel_x = -PLAYER_RUN_SPEED;
+        if (!player->wall_left && !player->wall_right) 
+        {
+            if (keystate[SDL_SCANCODE_LEFT]) {
+                if (!keystate[SDL_SCANCODE_Z])
+                    player->vel_x = -PLAYER_WALK_SPEED;
+                if (keystate[SDL_SCANCODE_Z])
+                    player->vel_x = -PLAYER_RUN_SPEED;
+            }
+            if (keystate[SDL_SCANCODE_RIGHT]) {
+                if (!keystate[SDL_SCANCODE_Z])
+                    player->vel_x = PLAYER_WALK_SPEED;
+                if (keystate[SDL_SCANCODE_Z])
+                    player->vel_x = PLAYER_RUN_SPEED;
+            }
+            // if the player is not pressing 
+            // right or left, stop moving
+            if (!keystate[SDL_SCANCODE_LEFT] && !keystate[SDL_SCANCODE_RIGHT])
+                player->vel_x = 0;
         }
-        
-        if (keystate[SDL_SCANCODE_RIGHT] && !player->wall_right) {
-            if (!keystate[SDL_SCANCODE_Z])
-                player->vel_x = PLAYER_WALK_SPEED;
-            if (keystate[SDL_SCANCODE_Z])
-                player->vel_x = PLAYER_RUN_SPEED;
-        }
-        // if the player is not pressing 
-        // right or left, stop moving
-        if (!keystate[SDL_SCANCODE_LEFT] && !keystate[SDL_SCANCODE_RIGHT])
-            player->vel_x = 0;
 
         // jump when on the ground
         if (player->ground && !player->jumped) {

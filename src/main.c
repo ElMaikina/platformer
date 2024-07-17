@@ -29,30 +29,26 @@ int main(int argc, char *argv[])
     SDL_Renderer* rend = SDL_CreateRenderer(win, -1, render_flags);
 
     // create the main player
-    Player *player = createPlayer(rend, "./image/round.png");
+    Player *player = createPlayer(rend, "image/round.png");
 
     // stores all the bullets to be drawn in a linked list
     Block *blocks[] = {
-        createBlock(rend, 8 * 12, 23 * 12, "./image/block.png"),
-        createBlock(rend, 9 * 12, 23 * 12, "./image/block.png"),
-        createBlock(rend, 10 * 12, 23 * 12, "./image/block.png"),
-
-        createBlock(rend, 18 * 12, 23 * 12, "./image/block.png"),
-        createBlock(rend, 19 * 12, 23 * 12, "./image/block.png"),
-        createBlock(rend, 20 * 12, 23 * 12, "./image/block.png"),
-
-        createBlock(rend, 22 * 12, 27 * 12, "./image/block.png"),
-        createBlock(rend, 23 * 12, 27 * 12, "./image/block.png"),
-        createBlock(rend, 24 * 12, 27 * 12, "./image/block.png"),
-
-        createBlock(rend, 29 * 12, 25 * 12, "./image/block.png"),
-        createBlock(rend, 30 * 12, 25 * 12, "./image/block.png"),
-        createBlock(rend, 31 * 12, 25 * 12, "./image/block.png"),
-        
-        createBlock(rend, 41 * 12, 360 - 12, "./image/block.png"),
-        createBlock(rend, 41 * 12, 360 - 24, "./image/block.png"),
-        createBlock(rend, 41 * 12, 360 - 36, "./image/block.png"),
-        createBlock(rend, 41 * 12, 360 - 48, "./image/block.png"),
+        createBlock(rend, 8 * 12, 23 * 12, "image/block.png"),
+        createBlock(rend, 9 * 12, 23 * 12, "image/block.png"),
+        createBlock(rend, 10 * 12, 23 * 12, "image/block.png"),
+        createBlock(rend, 18 * 12, 23 * 12, "image/block.png"),
+        createBlock(rend, 19 * 12, 23 * 12, "image/block.png"),
+        createBlock(rend, 20 * 12, 23 * 12, "image/block.png"),
+        createBlock(rend, 22 * 12, 27 * 12, "image/block.png"),
+        createBlock(rend, 23 * 12, 27 * 12, "image/block.png"),
+        createBlock(rend, 24 * 12, 27 * 12, "image/block.png"),
+        createBlock(rend, 29 * 12, 25 * 12, "image/block.png"),
+        createBlock(rend, 30 * 12, 25 * 12, "image/block.png"),
+        createBlock(rend, 31 * 12, 25 * 12, "image/block.png"),
+        createBlock(rend, 41 * 12, 360 - 12, "image/block.png"),
+        createBlock(rend, 41 * 12, 360 - 24, "image/block.png"),
+        createBlock(rend, 41 * 12, 360 - 36, "image/block.png"),
+        createBlock(rend, 41 * 12, 360 - 48, "image/block.png"),
     };
 
     // get quantity of blocks for the render loop
