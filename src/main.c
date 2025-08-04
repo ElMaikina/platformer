@@ -1,136 +1,131 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_timer.h>
-#include <stdbool.h>
 
-#include "../include/player.h"
+#include <stdlib.h>
+#include <stdio.h>
 
-int main(int argc, char *argv[])
-{
-    // returns zero on success else non-zero
+#include "player.h"
+
+void ClearScreen(SDL_Renderer* rend) {
+    SDL_RenderClear(rend);
+}
+
+void DrawScreen(SDL_Renderer* rend) {
+    SDL_RenderPresent(rend);
+}
+
+Uint32 CheckGameState() {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT) {
+            return 0;
+        }
+    } return 1;
+}
+
+int main(int argc, char *argv[]) {
+    Uint32 flags = SDL_RENDERER_ACCELERATED;
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-        printf("error initializing SDL: %s\n", SDL_GetError());
+        printf("Error initializing SDL: %s", SDL_GetError());
     }
-    // creates a window
-    SDL_Window* win = SDL_CreateWindow("Platform Game",
-                                       SDL_WINDOWPOS_CENTERED,
-                                       SDL_WINDOWPOS_CENTERED,
-                                       WINDOW_WIDTH, 
-                                       WINDOW_HEIGHT, 
-                                       0);
-    // set the window to fullscreen
-    // SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN);
-
-    // triggers the program that controls
-    // your graphics hardware and sets flags
-    Uint32 render_flags = SDL_RENDERER_ACCELERATED;
- 
-    // creates a renderer to render our images
-    SDL_Renderer* rend = SDL_CreateRenderer(win, -1, render_flags);
-
-    // create the main player
-    Player *player = createPlayer(rend, "image/round.png");
-
-    // stores all the bullets to be drawn in a linked list
-    Block *blocks[] = {
-        createBlock(rend, 8 * 12, 23 * 12, "image/block.png"),
-        createBlock(rend, 9 * 12, 23 * 12, "image/block.png"),
-        createBlock(rend, 10 * 12, 23 * 12, "image/block.png"),
-        createBlock(rend, 18 * 12, 23 * 12, "image/block.png"),
-        createBlock(rend, 19 * 12, 23 * 12, "image/block.png"),
-        createBlock(rend, 20 * 12, 23 * 12, "image/block.png"),
-        createBlock(rend, 22 * 12, 27 * 12, "image/block.png"),
-        createBlock(rend, 23 * 12, 27 * 12, "image/block.png"),
-        createBlock(rend, 24 * 12, 27 * 12, "image/block.png"),
-        createBlock(rend, 29 * 12, 25 * 12, "image/block.png"),
-        createBlock(rend, 30 * 12, 25 * 12, "image/block.png"),
-        createBlock(rend, 31 * 12, 25 * 12, "image/block.png"),
-        createBlock(rend, 41 * 12, 360 - 12, "image/block.png"),
-        createBlock(rend, 41 * 12, 360 - 24, "image/block.png"),
-        createBlock(rend, 41 * 12, 360 - 36, "image/block.png"),
-        createBlock(rend, 41 * 12, 360 - 48, "image/block.png"),
-    };
-
-    // get quantity of blocks for the render loop
-    int block_len = sizeof(blocks) / sizeof(Block*);
+    SDL_Window* win = SDL_CreateWindow(
+        "Platformer in C",
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED,
+        WINDOW_WIDTH,
+        WINDOW_HEIGHT,
+        0
+    );
+    SDL_Renderer* rend = SDL_CreateRenderer(win, -1, flags);
+	//SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN);
+	//SDL_RenderSetIntegerScale(rend, SDL_TRUE);
+    Uint32 delta_t = 0;
+    Uint32 time_i = 0;
+    Uint32 time_f = 0;
+    Uint32 game = 1;
     
-    // controls animation loop
-    int close = 0;
+    Player *player = CreatePlayer(rend, WINDOW_WIDTH/2 + 800, WINDOW_HEIGHT/2 - TILE_SIZE * 2);
+    Level *level = CreateLevel(rend, 100, 35);
 
-    // count game ticks twice to update according to refresh rate
-    Uint32 ticks_a = 0;
-    Uint32 ticks_b = 0;
+    for (Uint32 i = 0; i < level->w; ++i) {
+        AddTileToLevel(level, i, 26);
+    }
 
-    // get the difference of ticks between a frame and another
-    Uint32 delta = 0;
- 
-    // animation loop
-    while (!close) {
+    AddTileToLevel(level, 8, 25);
+    AddTileToLevel(level, 8, 24);
+    AddTileToLevel(level, 8, 23);
+    AddTileToLevel(level, 8, 22);
+    AddTileToLevel(level, 8, 21);
 
-        // fetch game ticks
-        ticks_a = SDL_GetTicks();
-        
-        // get delta ticks to limit framerate
-        delta = ticks_a - ticks_b;
+    AddTileToLevel(level, 30, 25);
+    AddTileToLevel(level, 30, 24);
+    AddTileToLevel(level, 30, 23);
 
-        // poll os events
-        SDL_Event event;
+    AddTileToLevel(level, 44, 23);
+    AddTileToLevel(level, 45, 23);
+    AddTileToLevel(level, 46, 23);
+    AddTileToLevel(level, 47, 23);
+    AddTileToLevel(level, 48, 23);
 
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                close = 1;
-                return 0;
-            }
-        }
-        
-        // limit framerate by adding a delay
-        if (delta > 1000 / WINDOW_FRAMERATE) 
-        {
-            // print fps in terminal
-            printf("FPS: %d\n", (1000 / delta));
+    AddTileToLevel(level, 44, 23-5);
+    AddTileToLevel(level, 45, 23-5);
+    AddTileToLevel(level, 46, 23-5);
+    AddTileToLevel(level, 47, 23-5);
+    AddTileToLevel(level, 48, 23-5);
 
-            // update the tick count
-            ticks_b = ticks_a;
+    AddTileToLevel(level, 44-10, 23-7);
+    AddTileToLevel(level, 45-10, 23-7);
+    AddTileToLevel(level, 46-10, 23-7);
+    AddTileToLevel(level, 47-10, 23-7);
+    AddTileToLevel(level, 48-10, 23-7);
 
-            // clears the screen
-            SDL_RenderClear(rend);
-            
-            // manages player movement
-            moveAndControlPlayer(player);
+    AddTileToLevel(level, 44+10, 20);
+    AddTileToLevel(level, 45+10, 20);
+    AddTileToLevel(level, 46+10, 20);
+    AddTileToLevel(level, 47+10, 20);
+    AddTileToLevel(level, 48+10, 20);
 
-            // apply gravity and physics to player
-            applyGravityToPlayer(player);
+    AddTileToLevel(level, 44+14, 16);
+    AddTileToLevel(level, 45+14, 16);
+    AddTileToLevel(level, 46+14, 16);
+    AddTileToLevel(level, 47+14, 16);
+    AddTileToLevel(level, 48+14, 16);
 
-            // draws all the blocks
-            for (int b = 0; b < block_len; b++) {
-                SDL_RenderCopy(rend, blocks[b]->tex, NULL, &blocks[b]->dest);
-                applyCollisionToPlayerVer(player, blocks[b]);
-                applyCollisionToPlayerHor(player, blocks[b]);
-            }
+    AddTileToLevel(level, 48+15, 12);
+    AddTileToLevel(level, 48+15, 11);
+    AddTileToLevel(level, 48+15, 10);
+    AddTileToLevel(level, 48+15, 9);
+    AddTileToLevel(level, 48+15, 8);
+    AddTileToLevel(level, 48+15, 7);
 
-            // apply limits to player movement
-            applyBoundsToPlayer(player);
-
-            // then draws the player over the blocks
-            SDL_RenderCopy(rend, player->tex, NULL, &player->dest);
+    AddTileToLevel(level, 48+10, 12-3);
+    AddTileToLevel(level, 48+10, 11-3);
+    AddTileToLevel(level, 48+10, 10-3);
+    AddTileToLevel(level, 48+10, 9-3);
+    AddTileToLevel(level, 48+10, 8-3);
+    AddTileToLevel(level, 48+10, 7-3);
     
-            // triggers the double buffers
-            // for multiple rendering
-            SDL_RenderPresent(rend);
+    while (game) {
+        game = CheckGameState();
+        time_f = SDL_GetTicks();
+        delta_t = time_f - time_i;
+        if (delta_t > 1000 / WINDOW_RATE) {
+            ClearScreen(rend);
+            MovePlayer(player, level);
+            MoveCamera(player, level, rend);
+            DrawLevel(player, level, rend);
+            DrawPlayer(player, level, rend);
+            DrawScreen(rend);
+            time_i = time_f;
         }
     }
- 
-    // destroy texture
-    SDL_DestroyTexture(player->tex);
- 
-    // destroy renderer
+
+    FreePlayer(player);
+    FreeLevel(level);
+
     SDL_DestroyRenderer(rend);
- 
-    // destroy window
     SDL_DestroyWindow(win);
-     
-    // close SDL
     SDL_Quit();
- 
     return 0;
 }
