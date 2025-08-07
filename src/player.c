@@ -94,6 +94,7 @@ void PlayerRunning(Player *p, const Uint8 *key) {
     if (key[SDL_SCANCODE_RIGHT]) {
         if (abs(p->speed - p->vx) < DECELERATION) {
             p->vx = p->speed;
+            p->ax = 0;
         }
         if (p->vx < p->speed) {
             p->ax = ACCELERATION;
@@ -105,6 +106,7 @@ void PlayerRunning(Player *p, const Uint8 *key) {
     if (key[SDL_SCANCODE_LEFT]) {
         if (abs(p->speed + p->vx) < DECELERATION) {
             p->vx = -p->speed;
+            p->ax = 0;
         }
         if (p->vx > -p->speed) {
             p->ax = -ACCELERATION;
@@ -122,6 +124,7 @@ void PlayerRunning(Player *p, const Uint8 *key) {
         }
         if (abs(p->vx) < DECELERATION) {
             p->vx = 0;
+            p->ax = 0;
         }
     }
 }

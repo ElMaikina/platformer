@@ -7,6 +7,8 @@
 
 #include "player.h"
 
+#define SCALE 3
+
 void ClearScreen(SDL_Renderer* rend) {
     SDL_RenderClear(rend);
 }
@@ -33,12 +35,13 @@ int main(int argc, char *argv[]) {
         "Platformer in C",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
-        WINDOW_WIDTH,
-        WINDOW_HEIGHT,
+        WINDOW_WIDTH * SCALE,
+        WINDOW_HEIGHT * SCALE,
         0
     );
     SDL_Renderer* rend = SDL_CreateRenderer(win, -1, flags);
-	//SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN);
+    SDL_RenderSetScale(rend, (float)SCALE, (float)SCALE);
+	SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN);
 	//SDL_RenderSetIntegerScale(rend, SDL_TRUE);
     Uint32 delta_t = 0;
     Uint32 time_i = 0;
