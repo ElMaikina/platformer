@@ -34,6 +34,6 @@ Uint32 GetTileFromLevel(Level *l, int x, int y) {
     return tile;
 }
 
-void AddTileToLevel(Level *l, int x, int y) {
-    l->tiles[y * l->w + x] = 1;
+void AddTileToLevel(Level *l, int x, int y, int type) {
+    l->tiles[y * l->w + x] = type;
 }

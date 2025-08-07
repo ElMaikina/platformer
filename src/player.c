@@ -63,7 +63,7 @@ void DrawLevel(Player *p, Level *l, SDL_Renderer* rend) {
     for (int y = py + hr; y > py - hr; --y) {
         for (int x = px - wr; x < px + wr; ++x) {
             if (y >= 0 && y < l->h && x >= 0 && x < l->w) {
-                if (GetTileFromLevel(l, x, y) == 1) {
+                if (GetTileFromLevel(l, x, y) == BLOCK) {
                     l->rect.x = p->ofsx + x * TILE_SIZE - p->x;
                     l->rect.y = p->ofsy + y * TILE_SIZE - p->y;
                     l->rect.w = TILE_SIZE;
@@ -174,7 +174,7 @@ void PlayerCollideLeftRight(Player *p, Level *l) {
     for (int y = py + 2; y > py - 2; --y) {
         for (int x = px - 2; x < px + 2; ++x) {
             if (y >= 0 && y < l->h && x >= 0 && x < l->w) {
-                if (GetTileFromLevel(l, x, y) == 1) {
+                if (GetTileFromLevel(l, x, y) == BLOCK) {
                     l->rect.x = x * TILE_SIZE;
                     l->rect.y = y * TILE_SIZE;
                     p->rect.x = p->x + round(p->vx);
@@ -223,7 +223,7 @@ void PlayerCollideTopBottom(Player *p, Level *l) {
     for (int y = py + 2; y > py - 2; --y) {
         for (int x = px - 2; x < px + 2; ++x) {
             if (y >= 0 && y < l->h && x >= 0 && x < l->w) {
-                if (GetTileFromLevel(l, x, y) == 1) {
+                if (GetTileFromLevel(l, x, y) == BLOCK) {
                     l->rect.x = x * TILE_SIZE;
                     l->rect.y = y * TILE_SIZE;
                     p->rect.h = h + round(p->vy);

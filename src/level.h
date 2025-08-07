@@ -10,6 +10,12 @@
 #define WINDOW_RATE 60
 #define TILE_SIZE 12
 
+enum TileType {
+  NONE,
+  PLAYER,
+  BLOCK
+}; 
+
 typedef struct {
     SDL_Surface* surf;
     SDL_Texture* text;
@@ -20,5 +26,5 @@ typedef struct {
 
 Level *CreateLevel(SDL_Renderer* rend, Uint32 w, Uint32 h);
 Uint32 GetTileFromLevel(Level *l, int x, int y);
-void AddTileToLevel(Level *l, int x, int y);
+void AddTileToLevel(Level *l, int x, int y, int type);
 void FreeLevel(Level *l);

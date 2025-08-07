@@ -49,62 +49,54 @@ int main(int argc, char *argv[]) {
     Level *level = CreateLevel(rend, 100, 35);
 
     for (Uint32 i = 0; i < level->w; ++i) {
-        AddTileToLevel(level, i, 26);
+        AddTileToLevel(level, i, 26, BLOCK);
     }
 
-    AddTileToLevel(level, 8, 25);
-    AddTileToLevel(level, 8, 24);
-    AddTileToLevel(level, 8, 23);
-    AddTileToLevel(level, 8, 22);
-    AddTileToLevel(level, 8, 21);
-
-    AddTileToLevel(level, 30, 25);
-    AddTileToLevel(level, 30, 24);
-    AddTileToLevel(level, 30, 23);
-
-    AddTileToLevel(level, 44, 23);
-    AddTileToLevel(level, 45, 23);
-    AddTileToLevel(level, 46, 23);
-    AddTileToLevel(level, 47, 23);
-    AddTileToLevel(level, 48, 23);
-
-    AddTileToLevel(level, 44, 23-5);
-    AddTileToLevel(level, 45, 23-5);
-    AddTileToLevel(level, 46, 23-5);
-    AddTileToLevel(level, 47, 23-5);
-    AddTileToLevel(level, 48, 23-5);
-
-    AddTileToLevel(level, 44-10, 23-7);
-    AddTileToLevel(level, 45-10, 23-7);
-    AddTileToLevel(level, 46-10, 23-7);
-    AddTileToLevel(level, 47-10, 23-7);
-    AddTileToLevel(level, 48-10, 23-7);
-
-    AddTileToLevel(level, 44+10, 20);
-    AddTileToLevel(level, 45+10, 20);
-    AddTileToLevel(level, 46+10, 20);
-    AddTileToLevel(level, 47+10, 20);
-    AddTileToLevel(level, 48+10, 20);
-
-    AddTileToLevel(level, 44+14, 16);
-    AddTileToLevel(level, 45+14, 16);
-    AddTileToLevel(level, 46+14, 16);
-    AddTileToLevel(level, 47+14, 16);
-    AddTileToLevel(level, 48+14, 16);
-
-    AddTileToLevel(level, 48+15, 12);
-    AddTileToLevel(level, 48+15, 11);
-    AddTileToLevel(level, 48+15, 10);
-    AddTileToLevel(level, 48+15, 9);
-    AddTileToLevel(level, 48+15, 8);
-    AddTileToLevel(level, 48+15, 7);
-
-    AddTileToLevel(level, 48+10, 12-3);
-    AddTileToLevel(level, 48+10, 11-3);
-    AddTileToLevel(level, 48+10, 10-3);
-    AddTileToLevel(level, 48+10, 9-3);
-    AddTileToLevel(level, 48+10, 8-3);
-    AddTileToLevel(level, 48+10, 7-3);
+    AddTileToLevel(level, 8, 25, BLOCK);
+    AddTileToLevel(level, 8, 24, BLOCK);
+    AddTileToLevel(level, 8, 23, BLOCK);
+    AddTileToLevel(level, 8, 22, BLOCK);
+    AddTileToLevel(level, 8, 21, BLOCK);
+    AddTileToLevel(level, 30, 25, BLOCK);
+    AddTileToLevel(level, 30, 24, BLOCK);
+    AddTileToLevel(level, 30, 23, BLOCK);
+    AddTileToLevel(level, 44, 23, BLOCK);
+    AddTileToLevel(level, 45, 23, BLOCK);
+    AddTileToLevel(level, 46, 23, BLOCK);
+    AddTileToLevel(level, 47, 23, BLOCK);
+    AddTileToLevel(level, 48, 23, BLOCK);
+    AddTileToLevel(level, 44, 23-5, BLOCK);
+    AddTileToLevel(level, 45, 23-5, BLOCK);
+    AddTileToLevel(level, 46, 23-5, BLOCK);
+    AddTileToLevel(level, 47, 23-5, BLOCK);
+    AddTileToLevel(level, 48, 23-5, BLOCK);
+    AddTileToLevel(level, 44-10, 23-7, BLOCK);
+    AddTileToLevel(level, 45-10, 23-7, BLOCK);
+    AddTileToLevel(level, 46-10, 23-7, BLOCK);
+    AddTileToLevel(level, 47-10, 23-7, BLOCK);
+    AddTileToLevel(level, 48-10, 23-7, BLOCK);
+    AddTileToLevel(level, 44+10, 20, BLOCK);
+    AddTileToLevel(level, 45+10, 20, BLOCK);
+    AddTileToLevel(level, 46+10, 20, BLOCK);
+    AddTileToLevel(level, 47+10, 20, BLOCK);
+    AddTileToLevel(level, 48+10, 20, BLOCK);
+    AddTileToLevel(level, 44+14, 16, BLOCK);
+    AddTileToLevel(level, 45+14, 16, BLOCK);
+    AddTileToLevel(level, 46+14, 16, BLOCK);
+    AddTileToLevel(level, 47+14, 16, BLOCK);
+    AddTileToLevel(level, 48+14, 16, BLOCK);
+    AddTileToLevel(level, 48+15, 12, BLOCK);
+    AddTileToLevel(level, 48+15, 11, BLOCK);
+    AddTileToLevel(level, 48+15, 10, BLOCK);
+    AddTileToLevel(level, 48+15, 9, BLOCK);
+    AddTileToLevel(level, 48+15, 8, BLOCK);
+    AddTileToLevel(level, 48+15, 7, BLOCK);
+    AddTileToLevel(level, 48+10, 12-3, BLOCK);
+    AddTileToLevel(level, 48+10, 11-3, BLOCK);
+    AddTileToLevel(level, 48+10, 10-3, BLOCK);
+    AddTileToLevel(level, 48+10, 9-3, BLOCK);
+    AddTileToLevel(level, 48+10, 8-3, BLOCK);
+    AddTileToLevel(level, 48+10, 7-3, BLOCK);
     
     while (game) {
         game = CheckGameState();
