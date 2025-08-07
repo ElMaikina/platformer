@@ -23,7 +23,12 @@ Uint32 CheckGameState() {
         if (event.type == SDL_QUIT) {
             return 0;
         }
-    } return 1;
+    } 
+    const Uint8* key = SDL_GetKeyboardState(NULL);
+    if (key[SDL_SCANCODE_ESCAPE]) {
+        return 0;
+    }
+    return 1;
 }
 
 int main(int argc, char *argv[]) {
