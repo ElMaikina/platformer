@@ -105,8 +105,8 @@ Level *CreateLevel(SDL_Renderer* rend, int i) {
     level->surf = surf;
     level->text = text;
     level->rect = rect;
-    char *name = GetLevelFileName(i);
     Uint32 w, h;
+    char *name = GetLevelFileName(i);
     GetLevelSizeFromFile(name, &w, &h);
     char *path = GetLevelFilePath(name);
     Uint32 *tiles = LoadLevelFromFile(path, w, h);
