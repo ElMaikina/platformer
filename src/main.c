@@ -53,85 +53,11 @@ int main(int argc, char *argv[]) {
     Uint32 time_i = 0;
     Uint32 time_f = 0;
     Uint32 game = 1;
-    int leveln = 0;
+    int stage = 0;
 
-    char *levelname = GetLevelFileName(leveln);
-    if (levelname) {
-        printf("Found: %s\n", levelname);
-    }
-    Uint32 w, h = 0;
-    GetLevelSizeFromFile(levelname, &w, &h);
-    printf("Reading level dimensions...\nWidth: %d\nHeight: %d\n", w, h);
+    Player *player = CreatePlayer(rend, WINDOW_WIDTH/2, WINDOW_HEIGHT/2 - TILE_SIZE * 2);
+    Level *level = CreateLevel(rend, stage);
 
-    char *levelpath = GetLevelFilePath(levelname);
-    printf("Path of the level file...\nFile: %s\n", levelpath);
-
-    printf("Printing loaded tiles...\n");
-    Uint32 *tiles = LoadLevelFromFile("lvls/0-test-100x35.csv", w, h);
-    for (Uint32 y = 0; y < h; ++y) {
-        for (Uint32 x = 0; x < w; ++x) {
-            printf("%d ", tiles[y * w + x]);
-        }
-        printf("\n");
-    }
-
-    free(levelpath);
-    free(levelname);
-    free(tiles);
-    
-    Player *player = CreatePlayer(rend, WINDOW_WIDTH/2 + 800, WINDOW_HEIGHT/2 - TILE_SIZE * 2);
-    Level *level = CreateLevel(rend, 100, 35);
-
-    for (Uint32 i = 0; i < level->w; ++i) {
-        AddTileToLevel(level, i, 26, BLOCK);
-    }
-
-    AddTileToLevel(level, 8, 25, BLOCK);
-    AddTileToLevel(level, 8, 24, BLOCK);
-    AddTileToLevel(level, 8, 23, BLOCK);
-    AddTileToLevel(level, 8, 22, BLOCK);
-    AddTileToLevel(level, 8, 21, BLOCK);
-    AddTileToLevel(level, 30, 25, BLOCK);
-    AddTileToLevel(level, 30, 24, BLOCK);
-    AddTileToLevel(level, 30, 23, BLOCK);
-    AddTileToLevel(level, 44, 23, BLOCK);
-    AddTileToLevel(level, 45, 23, BLOCK);
-    AddTileToLevel(level, 46, 23, BLOCK);
-    AddTileToLevel(level, 47, 23, BLOCK);
-    AddTileToLevel(level, 48, 23, BLOCK);
-    AddTileToLevel(level, 44, 23-5, BLOCK);
-    AddTileToLevel(level, 45, 23-5, BLOCK);
-    AddTileToLevel(level, 46, 23-5, BLOCK);
-    AddTileToLevel(level, 47, 23-5, BLOCK);
-    AddTileToLevel(level, 48, 23-5, BLOCK);
-    AddTileToLevel(level, 44-10, 23-7, BLOCK);
-    AddTileToLevel(level, 45-10, 23-7, BLOCK);
-    AddTileToLevel(level, 46-10, 23-7, BLOCK);
-    AddTileToLevel(level, 47-10, 23-7, BLOCK);
-    AddTileToLevel(level, 48-10, 23-7, BLOCK);
-    AddTileToLevel(level, 44+10, 20, BLOCK);
-    AddTileToLevel(level, 45+10, 20, BLOCK);
-    AddTileToLevel(level, 46+10, 20, BLOCK);
-    AddTileToLevel(level, 47+10, 20, BLOCK);
-    AddTileToLevel(level, 48+10, 20, BLOCK);
-    AddTileToLevel(level, 44+14, 16, BLOCK);
-    AddTileToLevel(level, 45+14, 16, BLOCK);
-    AddTileToLevel(level, 46+14, 16, BLOCK);
-    AddTileToLevel(level, 47+14, 16, BLOCK);
-    AddTileToLevel(level, 48+14, 16, BLOCK);
-    AddTileToLevel(level, 48+15, 12, BLOCK);
-    AddTileToLevel(level, 48+15, 11, BLOCK);
-    AddTileToLevel(level, 48+15, 10, BLOCK);
-    AddTileToLevel(level, 48+15, 9, BLOCK);
-    AddTileToLevel(level, 48+15, 8, BLOCK);
-    AddTileToLevel(level, 48+15, 7, BLOCK);
-    AddTileToLevel(level, 48+10, 12-3, BLOCK);
-    AddTileToLevel(level, 48+10, 11-3, BLOCK);
-    AddTileToLevel(level, 48+10, 10-3, BLOCK);
-    AddTileToLevel(level, 48+10, 9-3, BLOCK);
-    AddTileToLevel(level, 48+10, 8-3, BLOCK);
-    AddTileToLevel(level, 48+10, 7-3, BLOCK);
-    
     while (game) {
         game = CheckGameState();
         time_f = SDL_GetTicks();

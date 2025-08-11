@@ -95,7 +95,7 @@ Uint32 *LoadLevelFromFile(const char* path, Uint32 w, Uint32 h) {
     return tiles;
 }
 
-Level *CreateLevel(SDL_Renderer* rend, Uint32 w, Uint32 h) {
+Level *CreateLevel(SDL_Renderer* rend, int i) {
     SDL_Rect rect;
     Level *level = malloc(sizeof(Level));
     SDL_Surface* surf = IMG_Load("img/block.png");
@@ -105,15 +105,16 @@ Level *CreateLevel(SDL_Renderer* rend, Uint32 w, Uint32 h) {
     level->surf = surf;
     level->text = text;
     level->rect = rect;
+    char *name = GetLevelFileName(i);
+    Uint32 w, h;
+    GetLevelSizeFromFile(name, &w, &h);
+    char *path = GetLevelFilePath(name);
+    Uint32 *tiles = LoadLevelFromFile(path, w, h);
+    level->tiles = tiles;
     level->w = w;
     level->h = h;
-    Uint32 *tiles = (Uint32 *)malloc(w * h * sizeof(Uint32));
-    for (Uint32 i = 0; i < h; ++i) {
-        for (Uint32 j = 0; j < w; ++j) {
-            tiles[i * w + j] = 0;
-        }
-    }
-    level->tiles = tiles;
+    free(path);
+    free(name);
     return level;
 }
 
