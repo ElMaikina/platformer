@@ -48,10 +48,36 @@ int main(int argc, char *argv[]) {
     SDL_RenderSetScale(rend, (float)SCALE, (float)SCALE);
 	SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN);
 	//SDL_RenderSetIntegerScale(rend, SDL_TRUE);
+
     Uint32 delta_t = 0;
     Uint32 time_i = 0;
     Uint32 time_f = 0;
     Uint32 game = 1;
+    int leveln = 0;
+
+    char *levelname = GetLevelFileName(leveln);
+    if (levelname) {
+        printf("Found: %s\n", levelname);
+    }
+    Uint32 w, h = 0;
+    GetLevelSizeFromFile(levelname, &w, &h);
+    printf("Reading level dimensions...\nWidth: %d\nHeight: %d\n", w, h);
+
+    char *levelpath = GetLevelFilePath(levelname);
+    printf("Path of the level file...\nFile: %s\n", levelpath);
+
+    printf("Printing loaded tiles...\n");
+    Uint32 *tiles = LoadLevelFromFile("lvls/0-test-100x35.csv", w, h);
+    for (Uint32 y = 0; y < h; ++y) {
+        for (Uint32 x = 0; x < w; ++x) {
+            printf("%d ", tiles[y * w + x]);
+        }
+        printf("\n");
+    }
+
+    free(levelpath);
+    free(levelname);
+    free(tiles);
     
     Player *player = CreatePlayer(rend, WINDOW_WIDTH/2 + 800, WINDOW_HEIGHT/2 - TILE_SIZE * 2);
     Level *level = CreateLevel(rend, 100, 35);

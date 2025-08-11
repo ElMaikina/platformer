@@ -4,11 +4,14 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <dirent.h>
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 360
 #define WINDOW_RATE 60
 #define TILE_SIZE 12
+#define LVL_DIR "lvls"
 
 enum TileType {
   NONE,
@@ -24,7 +27,11 @@ typedef struct {
     Uint32 w, h;
 } Level;
 
-Level *CreateLevel(SDL_Renderer* rend, Uint32 w, Uint32 h);
 Uint32 GetTileFromLevel(Level *l, int x, int y);
 void AddTileToLevel(Level *l, int x, int y, int type);
+char* GetLevelFilePath(const char* name);
+char* GetLevelFileName(int index);
+void GetLevelSizeFromFile(const char* filename, Uint32 *w, Uint32 *h);
+Uint32 *LoadLevelFromFile(const char* filename, Uint32 w, Uint32 h);
+Level *CreateLevel(SDL_Renderer* rend, Uint32 w, Uint32 h);
 void FreeLevel(Level *l);
