@@ -46,8 +46,7 @@ int main(int argc, char *argv[]) {
     );
     SDL_Renderer* rend = SDL_CreateRenderer(win, -1, flags);
     SDL_RenderSetScale(rend, (float)SCALE, (float)SCALE);
-	SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN);
-	//SDL_RenderSetIntegerScale(rend, SDL_TRUE);
+    SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN);
 
     Uint32 delta_t = 0;
     Uint32 time_i = 0;

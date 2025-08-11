@@ -33,5 +33,5 @@ char* GetLevelFilePath(const char* name);
 char* GetLevelFileName(int index);
 void GetLevelSizeFromFile(const char* filename, Uint32 *w, Uint32 *h);
 Uint32 *LoadLevelFromFile(const char* filename, Uint32 w, Uint32 h);
-Level *CreateLevel(SDL_Renderer* rend, int leveln);
+Level *CreateLevel(SDL_Renderer* rend, int i);
 void FreeLevel(Level *l);
