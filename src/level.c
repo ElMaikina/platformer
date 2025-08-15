@@ -1,8 +1,9 @@
 #include "level.h"
 
 Uint32 GetTileFromLevel(Level *l, int x, int y) {
-    int tile = l->tiles[y * l->w + x];
-    return tile;
+    if (y >= 0 && y < l->h && x >= 0 && x < l->w)
+        return l->tiles[y * l->w + x];
+    return 0;
 }
 
 void AddTileToLevel(Level *l, int x, int y, int type) {

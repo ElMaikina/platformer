@@ -62,14 +62,12 @@ void DrawLevel(Player *p, Level *l, SDL_Renderer* rend) {
     int hr = (WINDOW_HEIGHT / 2) / TILE_SIZE + 2;
     for (int y = py + hr; y > py - hr; --y) {
         for (int x = px - wr; x < px + wr; ++x) {
-            if (y >= 0 && y < l->h && x >= 0 && x < l->w) {
-                if (GetTileFromLevel(l, x, y) == BLOCK) {
-                    l->rect.x = p->ofsx + x * TILE_SIZE - p->x;
-                    l->rect.y = p->ofsy + y * TILE_SIZE - p->y;
-                    l->rect.w = TILE_SIZE;
-                    l->rect.h = TILE_SIZE;
-                    SDL_RenderCopy(rend, l->text, NULL, &l->rect);
-                }
+            if (GetTileFromLevel(l, x, y) == BLOCK) {
+                l->rect.x = p->ofsx + x * TILE_SIZE - p->x;
+                l->rect.y = p->ofsy + y * TILE_SIZE - p->y;
+                l->rect.w = TILE_SIZE;
+                l->rect.h = TILE_SIZE;
+                SDL_RenderCopy(rend, l->text, NULL, &l->rect);
             }
         }
     }
@@ -92,6 +90,8 @@ void PlayerFalling(Player *p, const Uint8 *key) {
 
 void PlayerRunning(Player *p, const Uint8 *key) {
     if (key[SDL_SCANCODE_RIGHT]) {
+        p->vx = p->speed;
+        /*
         if (abs(p->speed - p->vx) < DECELERATION) {
             p->vx = p->speed;
             p->ax = 0;
@@ -102,8 +102,11 @@ void PlayerRunning(Player *p, const Uint8 *key) {
         if (p->vx > p->speed) {
             p->ax = -DECELERATION;
         }
+        */
     }
     if (key[SDL_SCANCODE_LEFT]) {
+        p->vx = -p->speed;
+        /*
         if (abs(p->speed + p->vx) < DECELERATION) {
             p->vx = -p->speed;
             p->ax = 0;
@@ -114,8 +117,11 @@ void PlayerRunning(Player *p, const Uint8 *key) {
         if (p->vx < -p->speed) {
             p->ax = DECELERATION;
         }
+        */
     }
     if (!key[SDL_SCANCODE_RIGHT] && !key[SDL_SCANCODE_LEFT]) {
+        p->vx = 0;
+        /*
         if (p->vx > 0) {
             p->ax = -DECELERATION;
         }
@@ -126,6 +132,7 @@ void PlayerRunning(Player *p, const Uint8 *key) {
             p->vx = 0;
             p->ax = 0;
         }
+        */
     }
 }
 
@@ -169,93 +176,81 @@ void PlayerSlowTime(Player *p, const Uint8 *key) {
     }
 }
 
-void PlayerCollideLeftRight(Player *p, Level *l) {
+void PlayerCollideH(Player *p, Level *l) {
     SDL_Rect res;
     SDL_bool col;
-    int px = p->x / TILE_SIZE;
-    int py = p->y / TILE_SIZE;
+    int px = POS_IN_GRID(p->x);
+    int py = POS_IN_GRID(p->y);
+    p->rect.x = p->x + round(p->vx * p->time);
     for (int y = py + 2; y > py - 2; --y) {
         for (int x = px - 2; x < px + 2; ++x) {
-            if (y >= 0 && y < l->h && x >= 0 && x < l->w) {
-                if (GetTileFromLevel(l, x, y) == BLOCK) {
-                    l->rect.x = x * TILE_SIZE;
-                    l->rect.y = y * TILE_SIZE;
-                    p->rect.x = p->x + round(p->vx);
-                    col = SDL_IntersectRect(&p->rect, &l->rect, &res);
-                    if (col == SDL_TRUE) {
-                        if (p->vx > 0) {
-                            p->x = l->rect.x - p->rect.w;
-                            p->rwall = true;
-                            p->vx = 0;
-                        }
-                        if (p->vx < 0) {
-                            p->x = l->rect.x + l->rect.w;
-                            p->lwall = true;
-                            p->vx = 0;
-                        }
+            if (GetTileFromLevel(l, x, y) == BLOCK) {
+                l->rect.x = x * TILE_SIZE;
+                l->rect.y = y * TILE_SIZE;
+                col = SDL_IntersectRect(&p->rect, &l->rect, &res);
+                if (col == SDL_TRUE) {
+                    if (p->vx > 0) {
+                        p->x = l->rect.x - p->rect.w;
+                        p->rect.x = p->x;
+                        p->rwall = true;
+                        p->vx = 0;
+                        p->ax = 0;
+                    }
+                    if (p->vx < 0) {
+                        p->x = l->rect.x + l->rect.w;
+                        p->rect.x = p->x;
+                        p->lwall = true;
+                        p->vx = 0;
+                        p->ax = 0;
                     }
                 }
             }
         }
     }
+    p->rect.x = p->x;
 }
 
-bool PlayerOverBlock(Player *p, Level *l) {
-    int dx = p->x - l->rect.x;
-    int dy = p->y - l->rect.y;
-    bool fall = p->vy > 0;
-    bool over = dy < 0 && abs(dy) > abs(dx);
-    bool result = fall && over;
-    return result;
-}
-bool PlayerUnderBlock(Player *p, Level *l) {
-    int dx = p->x - l->rect.x;
-    int dy = p->y - l->rect.y;
-    bool rise = p->vy < 0;
-    bool under = dy > 0 && abs(dy) > abs(dx);
-    bool result = rise && under;
-    return result;
-}
-
-void PlayerCollideTopBottom(Player *p, Level *l) {
+void PlayerCollideV(Player *p, Level *l) {
     SDL_Rect res;
     SDL_bool col;
-    Uint32 h = p->rect.h;
-    int px = p->x / TILE_SIZE;
-    int py = p->y / TILE_SIZE;
+    int px = POS_IN_GRID(p->x);
+    int py = POS_IN_GRID(p->y);
+    p->rect.y = p->y + round(p->vy * p->time);
     for (int y = py + 2; y > py - 2; --y) {
         for (int x = px - 2; x < px + 2; ++x) {
-            if (y >= 0 && y < l->h && x >= 0 && x < l->w) {
-                if (GetTileFromLevel(l, x, y) == BLOCK) {
-                    l->rect.x = x * TILE_SIZE;
-                    l->rect.y = y * TILE_SIZE;
-                    p->rect.h = h + round(p->vy);
-                    col = SDL_IntersectRect(&p->rect, &l->rect, &res);
-                    if (col == SDL_TRUE) {
-                        p->rect.h = h;
-                        if (PlayerOverBlock(p, l)) {
-                            p->y = l->rect.y - p->rect.h;
-                            p->rect.y = p->y;
-                            p->floor = true;
-                            p->vy = 0;
-                        }
-                        if (PlayerUnderBlock(p, l)) {
-                            p->y = l->rect.y + l->rect.h;
-                            p->rect.y = p->y;
-                            p->ceil = true;
-                            p->vy = 0;
-                        }
+            if (GetTileFromLevel(l, x, y) == BLOCK) {
+                l->rect.x = x * TILE_SIZE;
+                l->rect.y = y * TILE_SIZE;
+                col = SDL_IntersectRect(&p->rect, &l->rect, &res);
+                if (col == SDL_TRUE) {
+                    if (p->vy > 0) {
+                        p->y = l->rect.y - p->rect.h;
+                        p->rect.y = p->y;
+                        p->floor = true;
+                        p->vy = 0;
+                        p->ay = 0;
+                    }
+                    if (p->vy < 0) {
+                        p->y = l->rect.y + l->rect.h;
+                        p->rect.y = p->y;
+                        p->ceil = true;
+                        p->vy = 0;
+                        p->ay = 0;
                     }
                 }
             }
         }
     }
-    p->rect.h = h;
+    p->rect.y = p->y;
 }
 
 void PlayerCollision(Player *p, Level *l) {
-    PlayerCollideTopBottom(p, l);
-    PlayerCollideLeftRight(p, l);
+    p->rwall = false;
+    p->lwall = false;
+    p->floor = false;
+    p->ceil = false;
+    PlayerCollideV(p, l);
+    PlayerCollideH(p, l);
 }
 
 void PlayerApplyMove(Player *p) {
@@ -267,21 +262,13 @@ void PlayerApplyMove(Player *p) {
     p->rect.y = p->y;
 }
 
-void PlayerResetBounds(Player *p) {
-    p->rwall = false;
-    p->lwall = false;
-    p->floor = false;
-    p->ceil = false;
-}
-
 void MovePlayer(Player *p, Level *l) {
     const Uint8* key = SDL_GetKeyboardState(NULL);
+    PlayerApplyMove(p);
     PlayerFalling(p, key);
     PlayerRunning(p, key);
     PlayerJumping(p, key);
     PlayerMaxSpeed(p, key);
     PlayerSlowTime(p, key);
-    PlayerApplyMove(p);
-    PlayerResetBounds(p);
     PlayerCollision(p, l);
 }

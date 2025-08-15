@@ -9,7 +9,7 @@
 
 #include "level.h"
 
-#define WALK_SPEED 6.0
+#define WALK_SPEED 4.0
 #define RUN_SPEED 8.0
 #define WALLJUMP_H 10.0
 #define WALLJUMP_V 8.0
@@ -26,8 +26,7 @@ typedef struct {
     SDL_Rect rect;
     int x, y, ofsx, ofsy;
     float vx, vy, ax, ay;
-    float time;
-    float speed;
+    float speed, time;
     bool rwall, lwall;
     bool floor, ceil;
     bool jump;

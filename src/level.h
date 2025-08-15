@@ -13,6 +13,8 @@
 #define TILE_SIZE 12
 #define LVL_DIR "lvls"
 
+#define POS_IN_GRID(N)  (((N) == 0) ? 0:(((N * 10)/TILE_SIZE) + 5)/10)
+
 enum TileType {
   NONE,
   PLAYER,
