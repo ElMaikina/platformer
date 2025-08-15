@@ -90,49 +90,13 @@ void PlayerFalling(Player *p, const Uint8 *key) {
 
 void PlayerRunning(Player *p, const Uint8 *key) {
     if (key[SDL_SCANCODE_RIGHT]) {
-        p->vx = p->speed;
-        /*
-        if (abs(p->speed - p->vx) < DECELERATION) {
-            p->vx = p->speed;
-            p->ax = 0;
-        }
-        if (p->vx < p->speed) {
-            p->ax = ACCELERATION;
-        }
-        if (p->vx > p->speed) {
-            p->ax = -DECELERATION;
-        }
-        */
+        p->vx = WALK_SPEED;
     }
     if (key[SDL_SCANCODE_LEFT]) {
-        p->vx = -p->speed;
-        /*
-        if (abs(p->speed + p->vx) < DECELERATION) {
-            p->vx = -p->speed;
-            p->ax = 0;
-        }
-        if (p->vx > -p->speed) {
-            p->ax = -ACCELERATION;
-        }
-        if (p->vx < -p->speed) {
-            p->ax = DECELERATION;
-        }
-        */
+        p->vx = -WALK_SPEED;
     }
     if (!key[SDL_SCANCODE_RIGHT] && !key[SDL_SCANCODE_LEFT]) {
         p->vx = 0;
-        /*
-        if (p->vx > 0) {
-            p->ax = -DECELERATION;
-        }
-        if (p->vx < 0) {
-            p->ax = DECELERATION;
-        }
-        if (abs(p->vx) < DECELERATION) {
-            p->vx = 0;
-            p->ax = 0;
-        }
-        */
     }
 }
 
@@ -155,15 +119,6 @@ void PlayerJumping(Player *p, const Uint8 *key) {
     }
     if (!key[SDL_SCANCODE_X]) {
         p->jump = false;
-    }
-}
-
-void PlayerMaxSpeed(Player *p, const Uint8 *key) {
-    if (!key[SDL_SCANCODE_Z]) {
-        p->speed = WALK_SPEED;
-    }
-    if (key[SDL_SCANCODE_Z]) {
-        p->speed = RUN_SPEED;
     }
 }
 
@@ -268,7 +223,6 @@ void MovePlayer(Player *p, Level *l) {
     PlayerFalling(p, key);
     PlayerRunning(p, key);
     PlayerJumping(p, key);
-    PlayerMaxSpeed(p, key);
     PlayerSlowTime(p, key);
     PlayerCollision(p, l);
 }
