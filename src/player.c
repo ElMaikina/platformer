@@ -65,7 +65,14 @@ void DrawLevel(Player *p, Level *l, SDL_Renderer* rend) {
                 l->rect.y = p->ofsy + y * TILE_SIZE - p->y;
                 l->rect.w = TILE_SIZE;
                 l->rect.h = TILE_SIZE;
-                SDL_RenderCopy(rend, l->text, NULL, &l->rect);
+                SDL_RenderCopy(rend, l->blocktext, NULL, &l->rect);
+            }
+            if (GetTileFromLevel(l, x, y) == SLOPE) {
+                l->rect.x = p->ofsx + x * TILE_SIZE - p->x;
+                l->rect.y = p->ofsy + y * TILE_SIZE - p->y;
+                l->rect.w = TILE_SIZE;
+                l->rect.h = TILE_SIZE;
+                SDL_RenderCopy(rend, l->slopetext, NULL, &l->rect);
             }
         }
     }
@@ -84,6 +91,7 @@ void PlayerFalling(Player *p, const Uint8 *key) {
     if (p->vy >= FALL_SPEED) {
         p->vy = FALL_SPEED;
     }
+    p->vy += p->ay * p->time;
 }
 
 void PlayerRunning(Player *p, const Uint8 *key) {
@@ -118,16 +126,16 @@ void PlayerJumping(Player *p, const Uint8 *key) {
             p->vy = -JUMP_SPEED;
             p->jump = true;
         }
-        if (!p->floor && p->rwall) {
-            p->vx = -WALLJUMP_H;
-            p->vy = -WALLJUMP_V;
-            p->jump = true;
-        }
-        if (!p->floor && p->lwall) {
-            p->vx = WALLJUMP_H;
-            p->vy = -WALLJUMP_V;
-            p->jump = true;
-        }
+		if (!p->floor && p->rwall) {
+			p->vx = -WALLJUMP_H;
+			p->vy = -WALLJUMP_V;
+			p->jump = true;
+		}
+		if (!p->floor && p->lwall) {
+			p->vx = WALLJUMP_H;
+			p->vy = -WALLJUMP_V;
+			p->jump = true;
+		}
     }
     if (!key[SDL_SCANCODE_X]) {
         p->jump = false;

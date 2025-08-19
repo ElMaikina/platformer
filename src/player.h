@@ -17,7 +17,7 @@
 #define DECELERATION 0.5
 #define JUMP_SPEED 8.0
 #define FALL_SPEED 8.0
-#define GRAVITY 0.5
+#define GRAVITY 0.25
 #define SLOWTIME 0.2
 
 typedef struct {

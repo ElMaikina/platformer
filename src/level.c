@@ -99,13 +99,23 @@ Uint32 *LoadLevelFromFile(const char* path, Uint32 w, Uint32 h) {
 Level *CreateLevel(SDL_Renderer* rend, int i) {
     SDL_Rect rect;
     Level *level = malloc(sizeof(Level));
-    SDL_Surface* surf = IMG_Load("img/block.png");
-    SDL_Texture* text = SDL_CreateTextureFromSurface(rend, surf);
-    SDL_QueryTexture(text, NULL, NULL, &rect.w, &rect.h);
+
+    SDL_Surface* blocksurf = IMG_Load("img/block.png");
+    SDL_Texture* blocktext = SDL_CreateTextureFromSurface(rend, blocksurf);
+
+    SDL_Surface* slopesurf = IMG_Load("img/slope.png");
+    SDL_Texture* slopetext = SDL_CreateTextureFromSurface(rend, blocksurf);
+
+    SDL_QueryTexture(blocktext, NULL, NULL, &rect.w, &rect.h);
+    SDL_QueryTexture(slopetext, NULL, NULL, &rect.w, &rect.h);
+
     rect.x = 0; rect.y = 0;
-    level->surf = surf;
-    level->text = text;
+    level->blocksurf = blocksurf;
+    level->slopesurf = slopesurf;
+    level->blocktext = blocktext;
+    level->slopetext = slopetext;
     level->rect = rect;
+
     Uint32 w, h;
     char *name = GetLevelFileName(i);
     GetLevelSizeFromFile(name, &w, &h);
@@ -114,14 +124,17 @@ Level *CreateLevel(SDL_Renderer* rend, int i) {
     level->tiles = tiles;
     level->w = w;
     level->h = h;
+
     free(path);
     free(name);
     return level;
 }
 
 void FreeLevel(Level *l) {
-    SDL_DestroyTexture(l->text);
-    SDL_FreeSurface(l->surf);
+    SDL_DestroyTexture(l->blocktext);
+    SDL_DestroyTexture(l->slopetext);
+    SDL_FreeSurface(l->blocksurf);
+    SDL_FreeSurface(l->slopesurf);
     free(l->tiles);
     free(l);
 }
