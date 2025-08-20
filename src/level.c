@@ -104,7 +104,7 @@ Level *CreateLevel(SDL_Renderer* rend, int i) {
     SDL_Texture* blocktext = SDL_CreateTextureFromSurface(rend, blocksurf);
 
     SDL_Surface* slopesurf = IMG_Load("img/slope.png");
-    SDL_Texture* slopetext = SDL_CreateTextureFromSurface(rend, blocksurf);
+    SDL_Texture* slopetext = SDL_CreateTextureFromSurface(rend, slopesurf);
 
     SDL_QueryTexture(blocktext, NULL, NULL, &rect.w, &rect.h);
     SDL_QueryTexture(slopetext, NULL, NULL, &rect.w, &rect.h);

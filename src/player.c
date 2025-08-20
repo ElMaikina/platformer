@@ -212,7 +212,45 @@ void PlayerCollideV(Player *p, Level *l) {
             }
         }
     }
-    p->rect.y = p->y;
+    if (GetTileFromLevel(l, x, py + 1) == BLOCK) {
+        if (p->vy >= 0) {
+            p->y = l->rect.y - p->rect.h;
+            p->rect.y = p->y;
+            p->floor = true;
+            p->vy = 0;
+            p->ay = 0;
+        }
+        p->rect.y = p->y;
+    }
+}
+
+void PlayerInSlope(Player *p, Level *l) {
+    //SDL_bool col;
+    if (!p->floor) {
+        SDL_bool col;
+        int px = POS_IN_GRID(p->x);
+        int py = POS_IN_GRID(p->y);
+        p->rect.y = p->y + round(p->vy * p->time);
+        for (int y = py + 1; y > py - 1; --y) {
+            for (int x = px + 1; x > px - 1; --x) {
+                if (GetTileFromLevel(l, x, y) == SLOPE) {
+                    int x1 = x * TILE_SIZE;
+                    int y1 = (y + 1) * TILE_SIZE;
+                    int x2 = (x + 1) * TILE_SIZE;
+                    int y2 = y * TILE_SIZE;
+                    col = SDL_IntersectRectAndLine(&p->rect, &x1, &y1, &x2, &y2);
+                    if (p->vy > 0 || col == SDL_TRUE) {
+                        p->y = y1 - (p->x - x1) - TILE_SIZE * 2 + 5;
+                        p->rect.y = p->y;
+                        p->floor = true;
+                        p->vy = 0;
+                        p->ay = 0;
+                    }
+                }
+            }
+        }
+        p->rect.y = p->y;
+    }
 }
 
 void PlayerCollision(Player *p, Level *l) {
@@ -222,6 +260,7 @@ void PlayerCollision(Player *p, Level *l) {
     p->ceil = false;
     PlayerCollideV(p, l);
     PlayerCollideH(p, l);
+    PlayerInSlope(p, l);
 }
 
 void PlayerApplyMove(Player *p) {

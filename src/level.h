@@ -23,11 +23,14 @@ enum TileType {
 }; 
 
 typedef struct {
-    SDL_Surface* blocksurf;
-    SDL_Surface* slopesurf;
-    SDL_Texture* blocktext;
-    SDL_Texture* slopetext;
     SDL_Rect rect;
+
+    SDL_Surface* blocksurf;
+    SDL_Texture* blocktext;
+    
+    SDL_Surface* slopesurf;
+    SDL_Texture* slopetext;
+    
     Uint32 *tiles;
     Uint32 w, h;
 } Level;
