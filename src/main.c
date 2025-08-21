@@ -40,8 +40,8 @@ int main(int argc, char *argv[]) {
         "Platformer in C",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
-        WINDOW_WIDTH * SCALE,
-        WINDOW_HEIGHT * SCALE,
+        WINDOW_W * SCALE,
+        WINDOW_H * SCALE,
         0
     );
     SDL_Renderer* rend = SDL_CreateRenderer(win, -1, flags);
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
     Uint32 game = 1;
     int stage = 0;
 
-    Player *player = CreatePlayer(rend, WINDOW_WIDTH/2, WINDOW_HEIGHT/2 - TILE_SIZE * 2);
+    Player *player = CreatePlayer(rend, WINDOW_W/2, WINDOW_H/2 - TILE_SIZE * 2);
     Level *level = CreateLevel(rend, stage);
 
     while (game) {

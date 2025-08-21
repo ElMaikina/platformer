@@ -27,24 +27,20 @@ Player *CreatePlayer(SDL_Renderer* rend, int x, int y) {
 }
 
 void MoveCamera(Player *p, Level *l, SDL_Renderer* rend) {
-    int top = WINDOW_HEIGHT / 2;
-    int left = WINDOW_WIDTH / 2;
-    int right = l->w*TILE_SIZE - left;
-    int btm = l->h*TILE_SIZE - top;
-    p->ofsx = WINDOW_WIDTH / 2;
-    p->ofsy = WINDOW_HEIGHT / 2;
-    if (p->x < left) {
-        p->ofsx += p->x - left;
-    }
-    if (p->x > right) {
-        p->ofsx += p->x - right;
-    }
-    if (p->y < top) {
-        p->ofsy += p->y - top;
-    }
-    if (p->y > btm) {
-        p->ofsy += p->y - btm;
-    }
+    int U = WINDOW_H / 2;
+    int L = WINDOW_W / 2;
+    int R = l->w*TILE_SIZE - L;
+    int D = l->h*TILE_SIZE - U;
+    p->ofsx = WINDOW_W / 2;
+    p->ofsy = WINDOW_H / 2;
+    if (p->x < L)
+        p->ofsx += p->x - L;
+    if (p->x > R)
+        p->ofsx += p->x - R;
+    if (p->y < U)
+        p->ofsy += p->y - U;
+    if (p->y > D)
+        p->ofsy += p->y - D;
 }
 
 void DrawPlayer(Player *p, Level *l, SDL_Renderer* rend) {
@@ -54,31 +50,31 @@ void DrawPlayer(Player *p, Level *l, SDL_Renderer* rend) {
 }
 
 void DrawLevel(Player *p, Level *l, SDL_Renderer* rend) {
-    int px = p->x / TILE_SIZE;
-    int py = p->y / TILE_SIZE;
-    int wr = (WINDOW_WIDTH / 2) / TILE_SIZE + 2;
-    int hr = (WINDOW_HEIGHT / 2) / TILE_SIZE + 2;
-    for (int y = py + hr; y > py - hr; --y) {
-        for (int x = px - wr; x < px + wr; ++x) {
+    int px = POS_IN_GRID(p->x);
+    int py = POS_IN_GRID(p->y);
+    int U = POS_IN_GRID(WINDOW_H / 2);
+    int L = POS_IN_GRID(WINDOW_W / 2);
+    int R = l->w - L;
+    int D = l->h - U;
+    if (px < L) px = L;
+    if (px > R) px = R;
+    if (py < U) py = U;
+    if (py > D) py = D;
+    for (int y = py + U; y > py - U; --y) {
+        for (int x = px - L; x < px + L; ++x) {
             if (GetTileFromLevel(l, x, y) == BLOCK) {
                 l->rect.x = p->ofsx + x * TILE_SIZE - p->x;
                 l->rect.y = p->ofsy + y * TILE_SIZE - p->y;
-                l->rect.w = TILE_SIZE;
-                l->rect.h = TILE_SIZE;
                 SDL_RenderCopy(rend, l->blocktext, NULL, &l->rect);
             }
             if (GetTileFromLevel(l, x, y) == INCLINE) {
                 l->rect.x = p->ofsx + x * TILE_SIZE - p->x;
                 l->rect.y = p->ofsy + y * TILE_SIZE - p->y;
-                l->rect.w = TILE_SIZE;
-                l->rect.h = TILE_SIZE;
                 SDL_RenderCopy(rend, l->inclinetext, NULL, &l->rect);
             }
             if (GetTileFromLevel(l, x, y) == DECLINE) {
                 l->rect.x = p->ofsx + x * TILE_SIZE - p->x;
                 l->rect.y = p->ofsy + y * TILE_SIZE - p->y;
-                l->rect.w = TILE_SIZE;
-                l->rect.h = TILE_SIZE;
                 SDL_RenderCopy(rend, l->declinetext, NULL, &l->rect);
             }
         }

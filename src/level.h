@@ -7,8 +7,8 @@
 #include <string.h>
 #include <dirent.h>
 
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 360
+#define WINDOW_W 640
+#define WINDOW_H 360
 #define WINDOW_RATE 60
 #define TILE_SIZE 12
 #define LVL_DIR "lvls"
