@@ -67,12 +67,12 @@ void DrawLevel(Player *p, Level *l, SDL_Renderer* rend) {
                 l->rect.h = TILE_SIZE;
                 SDL_RenderCopy(rend, l->blocktext, NULL, &l->rect);
             }
-            if (GetTileFromLevel(l, x, y) == SLOPE) {
+            if (GetTileFromLevel(l, x, y) == INCLINE) {
                 l->rect.x = p->ofsx + x * TILE_SIZE - p->x;
                 l->rect.y = p->ofsy + y * TILE_SIZE - p->y;
                 l->rect.w = TILE_SIZE;
                 l->rect.h = TILE_SIZE;
-                SDL_RenderCopy(rend, l->slopetext, NULL, &l->rect);
+                SDL_RenderCopy(rend, l->inclinetext, NULL, &l->rect);
             }
         }
     }
@@ -225,7 +225,6 @@ void PlayerCollideV(Player *p, Level *l) {
 }
 
 void PlayerInSlope(Player *p, Level *l) {
-    //SDL_bool col;
     if (!p->floor) {
         SDL_bool col;
         int px = POS_IN_GRID(p->x);
@@ -233,7 +232,7 @@ void PlayerInSlope(Player *p, Level *l) {
         p->rect.y = p->y + round(p->vy * p->time);
         for (int y = py + 1; y > py - 1; --y) {
             for (int x = px + 1; x > px - 1; --x) {
-                if (GetTileFromLevel(l, x, y) == SLOPE) {
+                if (GetTileFromLevel(l, x, y) == INCLINE) {
                     int x1 = x * TILE_SIZE;
                     int y1 = (y + 1) * TILE_SIZE;
                     int x2 = (x + 1) * TILE_SIZE;
