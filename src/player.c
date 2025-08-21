@@ -74,6 +74,13 @@ void DrawLevel(Player *p, Level *l, SDL_Renderer* rend) {
                 l->rect.h = TILE_SIZE;
                 SDL_RenderCopy(rend, l->inclinetext, NULL, &l->rect);
             }
+            if (GetTileFromLevel(l, x, y) == DECLINE) {
+                l->rect.x = p->ofsx + x * TILE_SIZE - p->x;
+                l->rect.y = p->ofsy + y * TILE_SIZE - p->y;
+                l->rect.w = TILE_SIZE;
+                l->rect.h = TILE_SIZE;
+                SDL_RenderCopy(rend, l->declinetext, NULL, &l->rect);
+            }
         }
     }
 }
@@ -240,6 +247,20 @@ void PlayerInSlope(Player *p, Level *l) {
                     col = SDL_IntersectRectAndLine(&p->rect, &x1, &y1, &x2, &y2);
                     if (p->vy > 0 || col == SDL_TRUE) {
                         p->y = y1 - (p->x - x1) - TILE_SIZE * 2 + 5;
+                        p->rect.y = p->y;
+                        p->floor = true;
+                        p->vy = 0;
+                        p->ay = 0;
+                    }
+                }
+                if (GetTileFromLevel(l, x, y) == DECLINE) {
+                    int x1 = x * TILE_SIZE;
+                    int y1 = y * TILE_SIZE;
+                    int x2 = (x + 1) * TILE_SIZE;
+                    int y2 = (y + 1) * TILE_SIZE;
+                    col = SDL_IntersectRectAndLine(&p->rect, &x1, &y1, &x2, &y2);
+                    if (p->vy > 0 || col == SDL_TRUE) {
+                        p->y = y1 + (p->x - x1) - TILE_SIZE + 5;
                         p->rect.y = p->y;
                         p->floor = true;
                         p->vy = 0;

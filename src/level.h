@@ -29,6 +29,8 @@ typedef struct {
     SDL_Texture* blocktext;
     SDL_Surface* inclinesurf;
     SDL_Texture* inclinetext;
+    SDL_Surface* declinesurf;
+    SDL_Texture* declinetext;
     Uint32 *tiles;
     Uint32 w, h;
 } Level;

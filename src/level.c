@@ -102,14 +102,18 @@ Level *CreateLevel(SDL_Renderer* rend, int i) {
     Level *level = malloc(sizeof(Level));
     SDL_Surface* blocksurf = IMG_Load("img/block.png");
     SDL_Texture* blocktext = SDL_CreateTextureFromSurface(rend, blocksurf);
-    SDL_Surface* inclinesurf = IMG_Load("img/slope.png");
+    SDL_Surface* inclinesurf = IMG_Load("img/incline.png");
     SDL_Texture* inclinetext = SDL_CreateTextureFromSurface(rend, inclinesurf);
+    SDL_Surface* declinesurf = IMG_Load("img/decline.png");
+    SDL_Texture* declinetext = SDL_CreateTextureFromSurface(rend, declinesurf);
     SDL_QueryTexture(blocktext, NULL, NULL, &rect.w, &rect.h);
     SDL_QueryTexture(inclinetext, NULL, NULL, &rect.w, &rect.h);
     level->blocktext = blocktext;
     level->blocksurf = blocksurf;
     level->inclinesurf = inclinesurf;
     level->inclinetext = inclinetext;
+    level->declinesurf = declinesurf;
+    level->declinetext = declinetext;
     level->rect = rect;
     Uint32 w, h;
     char *name = GetLevelFileName(i);
@@ -129,6 +133,8 @@ void FreeLevel(Level *l) {
     SDL_FreeSurface(l->blocksurf);
     SDL_DestroyTexture(l->inclinetext);
     SDL_FreeSurface(l->inclinesurf);
+    SDL_DestroyTexture(l->declinetext);
+    SDL_FreeSurface(l->declinesurf);
     free(l->tiles);
     free(l);
 }
