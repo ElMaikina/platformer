@@ -98,24 +98,19 @@ Uint32 *LoadLevelFromFile(const char* path, Uint32 w, Uint32 h) {
 
 Level *CreateLevel(SDL_Renderer* rend, int i) {
     SDL_Rect rect;
+    rect.x = 0; rect.y = 0;
     Level *level = malloc(sizeof(Level));
-
     SDL_Surface* blocksurf = IMG_Load("img/block.png");
     SDL_Texture* blocktext = SDL_CreateTextureFromSurface(rend, blocksurf);
-
     SDL_Surface* inclinesurf = IMG_Load("img/slope.png");
     SDL_Texture* inclinetext = SDL_CreateTextureFromSurface(rend, inclinesurf);
-
     SDL_QueryTexture(blocktext, NULL, NULL, &rect.w, &rect.h);
     SDL_QueryTexture(inclinetext, NULL, NULL, &rect.w, &rect.h);
-
-    rect.x = 0; rect.y = 0;
+    level->blocktext = blocktext;
     level->blocksurf = blocksurf;
     level->inclinesurf = inclinesurf;
-    level->blocktext = blocktext;
     level->inclinetext = inclinetext;
     level->rect = rect;
-
     Uint32 w, h;
     char *name = GetLevelFileName(i);
     GetLevelSizeFromFile(name, &w, &h);
@@ -124,7 +119,6 @@ Level *CreateLevel(SDL_Renderer* rend, int i) {
     level->tiles = tiles;
     level->w = w;
     level->h = h;
-
     free(path);
     free(name);
     return level;
@@ -132,8 +126,8 @@ Level *CreateLevel(SDL_Renderer* rend, int i) {
 
 void FreeLevel(Level *l) {
     SDL_DestroyTexture(l->blocktext);
-    SDL_DestroyTexture(l->inclinetext);
     SDL_FreeSurface(l->blocksurf);
+    SDL_DestroyTexture(l->inclinetext);
     SDL_FreeSurface(l->inclinesurf);
     free(l->tiles);
     free(l);
