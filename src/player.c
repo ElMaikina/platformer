@@ -202,8 +202,10 @@ void PlayerCollideV(Player *p, Level *l) {
             p->y = l->rect.y - p->rect.h;
             p->rect.y = p->y;
             p->ay = 0;
+            
             if (!key[SDL_SCANCODE_X])
                 p->vy = -JUMP_SPEED;
+            
             if (key[SDL_SCANCODE_X])
                 p->vy = -SPRING_SPEED;
         }
