@@ -49,6 +49,9 @@ void DrawLevel(Player *p, Level *l, SDL_Renderer* rend) {
             if (GetTileFromLevel(l, x, y) == DECLINE) {
                 SDL_RenderCopy(rend, l->decline_spr, NULL, &l->rect);
             }
+            if (GetTileFromLevel(l, x, y) == SPRING) {
+                SDL_RenderCopy(rend, l->up_spr, NULL, &l->rect);
+            }
         }
     }
 }
@@ -127,7 +130,8 @@ void PlayerCollideH(Player *p, Level *l) {
     int y = POS_IN_GRID(p->y);
     p->rect.x = p->x + round(p->vx * p->time);
     for (int x = px - 2; x < px + 2; ++x) {
-        if (GetTileFromLevel(l, x, y) == BLOCK) {
+        if (GetTileFromLevel(l, x, y) == BLOCK ||
+            GetTileFromLevel(l, x, y) == SPRING) {
             l->rect.x = x * TILE_SIZE;
             l->rect.y = y * TILE_SIZE;
             col = SDL_IntersectRect(&p->rect, &l->rect, &res);
@@ -159,7 +163,8 @@ void PlayerCollideV(Player *p, Level *l) {
     int py = POS_IN_GRID(p->y);
     p->rect.y = p->y + round(p->vy * p->time);
     for (int y = py + 2; y > py - 2; --y) {
-        if (GetTileFromLevel(l, x, y) == BLOCK) {
+        if (GetTileFromLevel(l, x, y) == BLOCK ||
+            GetTileFromLevel(l, x, y) == SPRING) {
             l->rect.x = x * TILE_SIZE;
             l->rect.y = y * TILE_SIZE;
             col = SDL_IntersectRect(&p->rect, &l->rect, &res);
@@ -188,6 +193,19 @@ void PlayerCollideV(Player *p, Level *l) {
             p->floor = true;
             p->vy = 0;
             p->ay = 0;
+        }
+        p->rect.y = p->y;
+    }
+    if (GetTileFromLevel(l, x, py + 1) == SPRING) {
+        const Uint8* key = SDL_GetKeyboardState(NULL);
+        if (p->vy >= 0) {
+            p->y = l->rect.y - p->rect.h;
+            p->rect.y = p->y;
+            p->ay = 0;
+            if (!key[SDL_SCANCODE_X])
+                p->vy = -JUMP_SPEED;
+            if (key[SDL_SCANCODE_X])
+                p->vy = -SPRING_SPEED;
         }
         p->rect.y = p->y;
     }

@@ -19,7 +19,8 @@ enum TileType {
   PLAYER,
   BLOCK,
   INCLINE,
-  DECLINE
+  DECLINE,
+  SPRING
 }; 
 
 typedef struct {
@@ -27,6 +28,7 @@ typedef struct {
     SDL_Texture* block_spr;
     SDL_Texture* incline_spr;
     SDL_Texture* decline_spr;
+    SDL_Texture* up_spr;
     Uint32 *tiles;
     Uint32 w, h;
 } Level;

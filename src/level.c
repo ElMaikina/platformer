@@ -101,6 +101,7 @@ Level *CreateLevel(SDL_Renderer* rend, int i) {
     l->block_spr = IMG_LoadTexture(rend, "img/block.png");
     l->incline_spr = IMG_LoadTexture(rend, "img/incline.png");
     l->decline_spr = IMG_LoadTexture(rend, "img/decline.png");
+    l->up_spr = IMG_LoadTexture(rend, "img/up.png");
     GetLevelSizeFromFile(name, l);
     LoadLevelFromFile(path, l);
     free(path);
@@ -113,6 +114,7 @@ void FreeLevel(Level *l) {
     SDL_DestroyTexture(l->block_spr);
     SDL_DestroyTexture(l->incline_spr);
     SDL_DestroyTexture(l->decline_spr);
+    SDL_DestroyTexture(l->up_spr);
     free(l->tiles);
     free(l);
 }

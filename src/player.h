@@ -15,6 +15,7 @@
 #define WALLJUMP_V 8.0
 #define ACCELERATION 1.0
 #define DECELERATION 0.5
+#define SPRING_SPEED 12.0
 #define JUMP_SPEED 8.0
 #define FALL_SPEED 8.0
 #define GRAVITY 0.25
