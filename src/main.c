@@ -1,10 +1,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_timer.h>
-
 #include <stdlib.h>
 #include <stdio.h>
-
 #include "player.h"
 
 #define SCALE 3
@@ -47,13 +45,14 @@ int main(int argc, char *argv[]) {
     SDL_Renderer* rend = SDL_CreateRenderer(win, -1, flags);
     SDL_RenderSetScale(rend, (float)SCALE, (float)SCALE);
     SDL_SetWindowFullscreen(win, SDL_WINDOW_FULLSCREEN);
-
+    
     Uint32 delta_t = 0;
     Uint32 time_i = 0;
     Uint32 time_f = 0;
     Uint32 game = 1;
+    
     int stage = 0;
-
+    
     Player *player = CreatePlayer(rend, WINDOW_W/2, WINDOW_H/2 - TILE_SIZE * 2);
     Level *level = CreateLevel(rend, stage);
 
@@ -71,10 +70,9 @@ int main(int argc, char *argv[]) {
             time_i = time_f;
         }
     }
-
+    
     FreePlayer(player);
     FreeLevel(level);
-
     SDL_DestroyRenderer(rend);
     SDL_DestroyWindow(win);
     SDL_Quit();
