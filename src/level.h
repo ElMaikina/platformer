@@ -25,12 +25,9 @@ enum TileType {
 
 typedef struct {
     SDL_Rect rect;
-    SDL_Surface* blocksurf;
-    SDL_Texture* blocktext;
-    SDL_Surface* inclinesurf;
-    SDL_Texture* inclinetext;
-    SDL_Surface* declinesurf;
-    SDL_Texture* declinetext;
+    SDL_Texture* block_spr;
+    SDL_Texture* incline_spr;
+    SDL_Texture* decline_spr;
     Uint32 *tiles;
     Uint32 w, h;
 } Level;
@@ -39,7 +36,7 @@ Uint32 GetTileFromLevel(Level *l, int x, int y);
 void AddTileToLevel(Level *l, int x, int y, int type);
 char* GetLevelFilePath(const char* name);
 char* GetLevelFileName(int index);
-void GetLevelSizeFromFile(const char* filename, Uint32 *w, Uint32 *h);
-Uint32 *LoadLevelFromFile(const char* filename, Uint32 w, Uint32 h);
+void GetLevelSizeFromFile(const char* filename, Level *l);
+void LoadLevelFromFile(const char* filename, Level *l);
 Level *CreateLevel(SDL_Renderer* rend, int i);
 void FreeLevel(Level *l);

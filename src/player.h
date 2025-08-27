@@ -21,8 +21,7 @@
 #define SLOWTIME 0.2
 
 typedef struct {
-    SDL_Surface* surf;
-    SDL_Texture* text;
+    SDL_Texture* sprite;
     SDL_Rect rect;
     int x, y, ofsx, ofsy;
     float vx, vy, ax, ay;

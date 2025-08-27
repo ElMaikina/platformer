@@ -58,83 +58,61 @@ char* GetLevelFilePath(const char* name) {
     return path;
 }
 
-void GetLevelSizeFromFile(const char* filename, Uint32 *w, Uint32 *h) {
+void GetLevelSizeFromFile(const char* filename, Level *l) {
     const char* dims = strrchr(filename, '-');
     if (!dims) 
         return;
     dims++;
-
     const char* x = strchr(dims, 'x');
     if (!x) 
         return;
-
-    *w = (Uint32)atoi(dims);
-    *h = (Uint32)atoi(x + 1);
+    l->w = (Uint32)atoi(dims);
+    l->h = (Uint32)atoi(x + 1);
 }
 
-Uint32 *LoadLevelFromFile(const char* path, Uint32 w, Uint32 h) {
+void LoadLevelFromFile(const char* path, Level *l) {
     FILE* f = fopen(path, "r");
     if (!f) {
         perror("Error opening level");
-        return NULL;
+        return;
     }
-    Uint32 *tiles = (Uint32 *)malloc(w * h * sizeof(Uint32));
-    for (Uint32 y = 0; y < h; ++y) {
-        for (Uint32 x = 0; x < w; ++x) {
-            if (fscanf(f, "%d", &tiles[y * w + x]) != 1) {
+    l->tiles = (Uint32 *)malloc(l->w * l->h * sizeof(Uint32));
+    for (Uint32 y = 0; y < l->h; ++y) {
+        for (Uint32 x = 0; x < l->w; ++x) {
+            if (fscanf(f, "%u", &l->tiles[y * l->w + x]) != 1) {
                 fprintf(stderr, "Error reading CSV at %d,%d\n", y, x);
                 fclose(f);
-                return NULL;
+                return;
             }
-            if (x < w - 1) {
+            if (x < l->w - 1) {
                 fgetc(f);
             }
         }
         fgetc(f);
     }
     fclose(f);
-    return tiles;
 }
 
 Level *CreateLevel(SDL_Renderer* rend, int i) {
-    SDL_Rect rect;
-    rect.x = 0; rect.y = 0;
-    Level *level = malloc(sizeof(Level));
-    SDL_Surface* blocksurf = IMG_Load("img/block.png");
-    SDL_Texture* blocktext = SDL_CreateTextureFromSurface(rend, blocksurf);
-    SDL_Surface* inclinesurf = IMG_Load("img/incline.png");
-    SDL_Texture* inclinetext = SDL_CreateTextureFromSurface(rend, inclinesurf);
-    SDL_Surface* declinesurf = IMG_Load("img/decline.png");
-    SDL_Texture* declinetext = SDL_CreateTextureFromSurface(rend, declinesurf);
-    SDL_QueryTexture(blocktext, NULL, NULL, &rect.w, &rect.h);
-    SDL_QueryTexture(inclinetext, NULL, NULL, &rect.w, &rect.h);
-    level->blocktext = blocktext;
-    level->blocksurf = blocksurf;
-    level->inclinesurf = inclinesurf;
-    level->inclinetext = inclinetext;
-    level->declinesurf = declinesurf;
-    level->declinetext = declinetext;
-    level->rect = rect;
-    Uint32 w, h;
+    SDL_Rect rect = {0, 0, TILE_SIZE, TILE_SIZE};
+    Level *l = malloc(sizeof(Level));
     char *name = GetLevelFileName(i);
-    GetLevelSizeFromFile(name, &w, &h);
     char *path = GetLevelFilePath(name);
-    Uint32 *tiles = LoadLevelFromFile(path, w, h);
-    level->tiles = tiles;
-    level->w = w;
-    level->h = h;
+    l->block_spr = IMG_LoadTexture(rend, "img/block.png");
+    l->incline_spr = IMG_LoadTexture(rend, "img/incline.png");
+    l->decline_spr = IMG_LoadTexture(rend, "img/decline.png");
+    GetLevelSizeFromFile(name, l);
+    LoadLevelFromFile(path, l);
     free(path);
     free(name);
-    return level;
+    l->rect = rect;
+    return l;
 }
 
 void FreeLevel(Level *l) {
-    SDL_DestroyTexture(l->blocktext);
-    SDL_FreeSurface(l->blocksurf);
-    SDL_DestroyTexture(l->inclinetext);
-    SDL_FreeSurface(l->inclinesurf);
-    SDL_DestroyTexture(l->declinetext);
-    SDL_FreeSurface(l->declinesurf);
+    SDL_DestroyTexture(l->block_spr);
+    SDL_DestroyTexture(l->incline_spr);
+    SDL_DestroyTexture(l->decline_spr);
     free(l->tiles);
     free(l);
 }

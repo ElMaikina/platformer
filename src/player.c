@@ -1,31 +1,5 @@
 #include "player.h"
 
-Player *CreatePlayer(SDL_Renderer* rend, int x, int y) {
-    SDL_Rect rect;
-    Player *player = (Player*)malloc(sizeof(Player));
-    SDL_Surface* surf = IMG_Load("img/player.png");
-    SDL_Texture* text = SDL_CreateTextureFromSurface(rend, surf);
-    SDL_QueryTexture(text, NULL, NULL, &rect.w, &rect.h);
-    rect.x = x; rect.y = y;
-    player->surf = surf;
-    player->text = text;
-    player->rect = rect;
-    player->rwall = false;
-    player->lwall = false;
-    player->floor = false;
-    player->ceil = false;
-    player->jump = false;
-    player->time = 1.0;
-    player->speed = 0;
-    player->x = x;
-    player->y = y;
-    player->vx = 0;
-    player->vy = 0;
-    player->ofsx = 0;
-    player->ofsy = 0;
-    return player;
-}
-
 void MoveCamera(Player *p, Level *l, SDL_Renderer* rend) {
     int U = WINDOW_H / 2;
     int L = WINDOW_W / 2;
@@ -46,7 +20,7 @@ void MoveCamera(Player *p, Level *l, SDL_Renderer* rend) {
 void DrawPlayer(Player *p, Level *l, SDL_Renderer* rend) {
     p->rect.x = p->ofsx;
     p->rect.y = p->ofsy;
-    SDL_RenderCopy(rend, p->text, NULL, &p->rect);
+    SDL_RenderCopy(rend, p->sprite, NULL, &p->rect);
 }
 
 void DrawLevel(Player *p, Level *l, SDL_Renderer* rend) {
@@ -62,29 +36,21 @@ void DrawLevel(Player *p, Level *l, SDL_Renderer* rend) {
     if (py > D) py = D;
     for (int y = py + U; y > py - U; --y) {
         for (int x = px - L; x < px + L; ++x) {
+            if (GetTileFromLevel(l, x, y) == NONE)
+                continue;
+            l->rect.x = p->ofsx + x * TILE_SIZE - p->x;
+            l->rect.y = p->ofsy + y * TILE_SIZE - p->y;
             if (GetTileFromLevel(l, x, y) == BLOCK) {
-                l->rect.x = p->ofsx + x * TILE_SIZE - p->x;
-                l->rect.y = p->ofsy + y * TILE_SIZE - p->y;
-                SDL_RenderCopy(rend, l->blocktext, NULL, &l->rect);
+                SDL_RenderCopy(rend, l->block_spr, NULL, &l->rect);
             }
             if (GetTileFromLevel(l, x, y) == INCLINE) {
-                l->rect.x = p->ofsx + x * TILE_SIZE - p->x;
-                l->rect.y = p->ofsy + y * TILE_SIZE - p->y;
-                SDL_RenderCopy(rend, l->inclinetext, NULL, &l->rect);
+                SDL_RenderCopy(rend, l->incline_spr, NULL, &l->rect);
             }
             if (GetTileFromLevel(l, x, y) == DECLINE) {
-                l->rect.x = p->ofsx + x * TILE_SIZE - p->x;
-                l->rect.y = p->ofsy + y * TILE_SIZE - p->y;
-                SDL_RenderCopy(rend, l->declinetext, NULL, &l->rect);
+                SDL_RenderCopy(rend, l->decline_spr, NULL, &l->rect);
             }
         }
     }
-}
-
-void FreePlayer(Player *p) {
-    SDL_DestroyTexture(p->text);
-    SDL_FreeSurface(p->surf);
-    free(p);
 }
 
 void PlayerFalling(Player *p, const Uint8 *key) {
@@ -296,4 +262,20 @@ void MovePlayer(Player *p, Level *l) {
     PlayerJumping(p, key);
     PlayerSlowTime(p, key);
     PlayerCollision(p, l);
+}
+
+Player *CreatePlayer(SDL_Renderer* rend, int x, int y) {
+    SDL_Rect rect = {x, y, TILE_SIZE, TILE_SIZE};
+    Player *p = (Player*)malloc(sizeof(Player));
+    p->sprite = IMG_LoadTexture(rend, "img/player.png");
+    p->rect = rect;
+    p->time = 1.0;
+    p->x = x;
+    p->y = y;
+    return p;
+}
+
+void FreePlayer(Player *p) {
+    SDL_DestroyTexture(p->sprite);
+    free(p);
 }
